@@ -421,7 +421,10 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     var rows = json.values || [];
     if (json.error) { set("weekOf", "Error: " + json.error.message); return; }
 
+    // Rows 0-15: core data
     set("weekOf", val(rows, 0, 1));
+    // Revenue handled in extendRender
+    // Capacity handled in extendRender
     set("headcountVal", val(rows, 11, 1) || "—");
     setBar("headcountBar", num(val(rows, 11, 1)), 50);
     set("clientsVal", val(rows, 12, 1) || "—");
@@ -429,20 +432,24 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     set("pipelineVal", money(num(val(rows, 6, 1))));
     set("openRolesVal", val(rows, 13, 1) || "—");
 
-    setRock(1, status(val(rows, 24, 1)), val(rows, 25, 1));
-    setRock(2, status(val(rows, 26, 1)), val(rows, 27, 1));
-    setRock(3, status(val(rows, 28, 1)), val(rows, 29, 1));
+    // Rows 16-21: rocks (0-indexed: 16,17,18,19,20,21)
+    setRock(1, status(val(rows, 16, 1)), val(rows, 17, 1));
+    setRock(2, status(val(rows, 18, 1)), val(rows, 19, 1));
+    setRock(3, status(val(rows, 20, 1)), val(rows, 21, 1));
 
-    setDot("d1dot", status(val(rows, 30, 1))); set("d1note", val(rows, 31, 1));
-    setDot("d2dot", status(val(rows, 32, 1))); set("d2note", val(rows, 33, 1));
-    setDot("d3dot", status(val(rows, 34, 1))); set("d3note", val(rows, 35, 1));
-    setDot("d4dot", status(val(rows, 36, 1))); set("d4note", val(rows, 37, 1));
-    setDot("d5dot", status(val(rows, 38, 1))); set("d5note", val(rows, 39, 1));
-    setDot("d6dot", status(val(rows, 40, 1))); set("d6note", val(rows, 41, 1));
+    // Rows 22-33: departments (0-indexed)
+    setDot("d1dot", status(val(rows, 22, 1))); set("d1note", val(rows, 23, 1));
+    setDot("d2dot", status(val(rows, 24, 1))); set("d2note", val(rows, 25, 1));
+    setDot("d3dot", status(val(rows, 26, 1))); set("d3note", val(rows, 27, 1));
+    setDot("d4dot", status(val(rows, 28, 1))); set("d4note", val(rows, 29, 1));
+    setDot("d5dot", status(val(rows, 30, 1))); set("d5note", val(rows, 31, 1));
+    setDot("d6dot", status(val(rows, 32, 1))); set("d6note", val(rows, 33, 1));
 
-    var flag = val(rows, 42, 1);
+    // Row 34: flag
+    var flag = val(rows, 34, 1);
     var flagEl = document.getElementById("flagText");
     if (flagEl && flag) { flagEl.textContent = flag; flagEl.classList.remove("empty"); }
+
     extendRender(rows);
   })
   .catch(function(e) { set("weekOf", "Error: " + e.message); });
@@ -458,7 +465,7 @@ function setCapacity(vid, bid, cur, max) {
 }
 
 function extendRender(rows) {
-  // Revenue
+  // Revenue (rows 1-5)
   var rt = num(val(rows, 1, 1));
   if (rt) {
     document.getElementById("revTotalVal").textContent = money(rt);
@@ -483,11 +490,19 @@ function extendRender(rows) {
   }
 
   // Reps
-  var repData = [
-    {name:"Sebastian Aguilera", mr:16, cr:17},
-    {name:"Luke Spinazzola",    mr:18, cr:19},
-    {name:"Kevin Arregoces",    mr:20, cr:21}
-  ];
+  // Reps start at row 35 (0-indexed), groups of 3: name(col1), meetings(col1 next row), closed(col1 next row)
+  var repData = [];
+  var repStart = 35;
+  for (var repIdx = 0; repIdx < 8; repIdx++) {
+    var nameRow = repStart + (repIdx * 3);
+    var repName = val(rows, nameRow, 1);
+    if (!repName) break; // stop when no more reps
+    repData.push({
+      name: repName,
+      mr: nameRow + 1,
+      cr: nameRow + 2
+    });
+  }
   var tbody = document.getElementById("repsBody");
   if (tbody) {
     tbody.innerHTML = "";
@@ -507,7 +522,7 @@ function extendRender(rows) {
   setCapacity("scConsultVal",   "scConsultBar",   num(val(rows,9,1)),  4);
   setCapacity("taxAdvisorsVal", "taxAdvisorsBar", num(val(rows,10,1)), 5);
 
-  // Quarterly
+  // Quarterly (rows 14,15)
   var qData=[{q:"q3",row:14,target:5450000},{q:"q4",row:15,target:5450000}];
   for (var qi=0;qi<qData.length;qi++) {
     var qd=qData[qi], qa=num(val(rows,qd.row,1));
