@@ -452,8 +452,7 @@ async function loadAll(){
     const gradMap = history.length ? buildGraduationMap(history) : {};
 
     // Leaderboard
-    const weeklyKey = Object.keys(teamSummary[0] || {}).find(k => k.toLowerCase().includes("weekly contact total"));
-    const sorted = teamSummary.slice().sort((a,b) => num(b[weeklyKey]) - num(a[weeklyKey]));
+    const weeklyKey = Object.keys(teamSummary[0] || {}).find(k => k.toLowerCase().includes("weekly total"));
 
     const lbBody = document.querySelector("#leaderboardTable tbody");
     lbBody.innerHTML = sorted.map((obj, i) => {
