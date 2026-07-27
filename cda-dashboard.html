@@ -181,6 +181,7 @@
         <th class="rank">#</th>
         <th>Associate</th>
         <th>Weekly Total</th>
+        <th>Conversion Rate</th>
         <th>LinkedIn</th>
         <th>Phone</th>
         <th>Events</th>
@@ -230,7 +231,8 @@ const SHEET_ID = "1ujwyY7WThRWJXlftxAaAFh41qNp9cGv3b8QjtkkDOu8";
 
 const VALUE_TABS = {
   teamSummary: "Team Summary",
-  history: "History"
+  history: "History",
+  ghlPerformance: "GHL Performance Data"
 };
 const SCORING_TAB = "Scoring Calculator";
 /* =================================================== */
@@ -438,6 +440,14 @@ async function loadAll(){
     const teamSummary = rowsToObjects(tabs.teamSummary);
     const scoring = parseScoringWithFormatting(scoringRows);
     const history = rowsToObjects(tabs.history);
+    const ghlPerf = rowsToObjects(tabs.ghlPerformance);
+
+    const convByName = {};
+    ghlPerf.forEach(obj => {
+      const name = getAssociateName(obj);
+      const convKey = Object.keys(obj).find(k => k.toLowerCase().includes("conversion"));
+      convByName[name] = convKey ? obj[convKey] : "";
+    });
 
     const gradMap = history.length ? buildGraduationMap(history) : {};
 
@@ -458,6 +468,7 @@ async function loadAll(){
         <td class="rank">${i+1}</td>
         <td class="name-cell">${name}</td>
         <td>${obj[weeklyKey] || 0}</td>
+        <td>${convByName[name] || "—"}</td>
         <td>${obj[li] || 0}</td>
         <td>${obj[ph] || 0}</td>
         <td>${obj[ev] || 0}</td>
