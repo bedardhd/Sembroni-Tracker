@@ -453,6 +453,7 @@ async function loadAll(){
 
     // Leaderboard
     const weeklyKey = Object.keys(teamSummary[0] || {}).find(k => k.toLowerCase().includes("weekly total"));
+    const sorted = teamSummary.slice().sort((a,b) => num(b[weeklyKey]) - num(a[weeklyKey]));
 
     const lbBody = document.querySelector("#leaderboardTable tbody");
     lbBody.innerHTML = sorted.map((obj, i) => {
