@@ -195,7 +195,7 @@
 </div>
 
 <div class="card">
-  <h2>200 KPI &amp; Graduation Eligibility</h2>
+  <h2>Sales Mentorship Program Graduation Eligibility</h2>
   <div class="grad-grid" id="gradGrid"></div>
   <div class="note">Green = 200+ logged for two consecutive weeks (graduation eligible). Amber = in progress this week. Gray = not enough weeks on record yet in History.</div>
 </div>
@@ -228,11 +228,11 @@
 const API_KEY = "AIzaSyCKnPHKRlDNyI74Ui223US7RhH7GxrG8bc";
 const SHEET_ID = "1ujwyY7WThRWJXlftxAaAFh41qNp9cGv3b8QjtkkDOu8";
 
-const TABS = {
+const VALUE_TABS = {
   teamSummary: "Team Summary",
-  scoring: "Scoring Calculator",
   history: "History"
 };
+const SCORING_TAB = "Scoring Calculator";
 /* =================================================== */
 
 const EXCLUDE_NAMES = ["team total", ""];
@@ -300,8 +300,8 @@ function setStatus(html, type){
   area.innerHTML = `<div class="status-msg status-${type}">${html}</div>`;
 }
 
-async function fetchTabs(){
-  const ranges = Object.values(TABS).map(t => `ranges=${encodeURIComponent(t + "!A:Z")}`).join("&");
+async function fetchValueTabs(){
+  const ranges = Object.values(VALUE_TABS).map(t => `ranges=${encodeURIComponent(t + "!A:Z")}`).join("&");
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values:batchGet?${ranges}&key=${API_KEY}`;
   const res = await fetch(url);
   if(!res.ok){
@@ -310,9 +310,76 @@ async function fetchTabs(){
   }
   const data = await res.json();
   const out = {};
-  const tabKeys = Object.keys(TABS);
+  const tabKeys = Object.keys(VALUE_TABS);
   data.valueRanges.forEach((vr, i) => { out[tabKeys[i]] = vr.values || []; });
   return out;
+}
+
+// Scoring Calculator needs cell background color (post conditional-formatting),
+// so this uses the full spreadsheets.get endpoint with a fields mask instead
+// of the plain values endpoint used above.
+async function fetchScoringFormatted(){
+  const range = encodeURIComponent(SCORING_TAB + "!A:Z");
+  const fields = encodeURIComponent("sheets.data.rowData.values(formattedValue,effectiveFormat.backgroundColor)");
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?ranges=${range}&fields=${fields}&key=${API_KEY}`;
+  const res = await fetch(url);
+  if(!res.ok){
+    const errBody = await res.text();
+    throw new Error(`Sheets API error ${res.status}: ${errBody.slice(0,200)}`);
+  }
+  const data = await res.json();
+  const rowData = (data.sheets && data.sheets[0] && data.sheets[0].data && data.sheets[0].data[0].rowData) || [];
+  return rowData;
+}
+
+function colorToRgb(colorObj){
+  if(!colorObj) return null;
+  return {
+    r: Math.round((colorObj.red || 0) * 255),
+    g: Math.round((colorObj.green || 0) * 255),
+    b: Math.round((colorObj.blue || 0) * 255)
+  };
+}
+
+function contrastTextColor(rgb){
+  const luminance = (0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b) / 255;
+  return luminance > 0.6 ? "#18174c" : "#ffffff";
+}
+
+function parseScoringWithFormatting(rowData){
+  if(!rowData || rowData.length === 0) return [];
+
+  const getCellText = (row, i) => (row && row.values && row.values[i] && row.values[i].formattedValue || "").toString().trim();
+
+  let headerIdx = 0;
+  for(let i=0; i<rowData.length; i++){
+    const vals = (rowData[i].values || []).map(v => (v.formattedValue||"").toString().trim().toLowerCase());
+    if(vals.some(v => v.includes("associate"))){ headerIdx = i; break; }
+  }
+
+  const headerRow = rowData[headerIdx];
+  const headers = (headerRow.values || []).map(v => (v.formattedValue||"").toString().trim());
+  const nameIdx = headers.findIndex(h => h.toLowerCase().includes("associate"));
+  const interpIdx = headers.findIndex(h => h.toLowerCase().includes("interpretation"));
+
+  const result = [];
+  for(let i = headerIdx + 1; i < rowData.length; i++){
+    const row = rowData[i];
+    const name = getCellText(row, nameIdx);
+    if(!name) break;
+    if(isExcluded(name)) continue;
+
+    const obj = {};
+    headers.forEach((h, idx) => { obj[h] = getCellText(row, idx); });
+
+    if(interpIdx >= 0){
+      const cell = row.values && row.values[interpIdx];
+      const bg = cell && cell.effectiveFormat && cell.effectiveFormat.backgroundColor;
+      obj.__interpColor = colorToRgb(bg);
+    }
+    result.push(obj);
+  }
+  return result;
 }
 
 function buildGraduationMap(historyObjs){
@@ -363,10 +430,13 @@ function gradCardHtml(name, thisWeek, gradMap){
 async function loadAll(){
   setStatus("Loading live data from Google Sheets…", "loading");
   try{
-    const tabs = await fetchTabs();
+    const [tabs, scoringRows] = await Promise.all([
+      fetchValueTabs(),
+      fetchScoringFormatted()
+    ]);
 
     const teamSummary = rowsToObjects(tabs.teamSummary);
-    const scoring = rowsToObjects(tabs.scoring);
+    const scoring = parseScoringWithFormatting(scoringRows);
     const history = rowsToObjects(tabs.history);
 
     const gradMap = history.length ? buildGraduationMap(history) : {};
@@ -414,6 +484,14 @@ async function loadAll(){
         return k ? obj[k] : "";
       };
       const interp = get("interpretation");
+      let badgeHtml;
+      if(obj.__interpColor){
+        const c = obj.__interpColor;
+        const textColor = contrastTextColor(c);
+        badgeHtml = `<span class="badge" style="background-color: rgb(${c.r},${c.g},${c.b}); color: ${textColor};">${interp}</span>`;
+      } else {
+        badgeHtml = `<span class="badge badge-unknown">${interp}</span>`;
+      }
       return `<tr>
         <td class="name-cell">${name}</td>
         <td>${get("crm")}</td>
@@ -422,7 +500,7 @@ async function loadAll(){
         <td>${get("execution")}</td>
         <td>${get("coaching")}</td>
         <td><strong>${get("weighted score")}</strong></td>
-        <td><span class="badge ${interpretationClass(interp)}">${interp}</span></td>
+        <td>${badgeHtml}</td>
       </tr>`;
     }).join("");
 
