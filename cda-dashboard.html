@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CDA Weekly Performance Tracker</title>
+<style>
+  :root{
+    --navy:#18174c;
+    --gold:#c9a44e;
+    --lavender:#dedfed;
+    --blue:#89acc9;
+    --green:#3a7d44;
+    --amber:#b8860b;
+    --red:#b23b3b;
+    --gray:#8a8a99;
+  }
+  * { box-sizing: border-box; }
+  body{
+    margin:0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #f7f7fb;
+    color: var(--navy);
+    padding: 20px;
+  }
+  .header{
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 22px;
+    border-radius: 10px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .header h1{
+    margin:0;
+    font-size: 1.3em;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+  .header .meta{
+    font-size: 0.8em;
+    color: var(--lavender);
+  }
+  .refresh-btn{
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+  .refresh-btn:hover{ opacity: 0.85; }
+
+  .card{
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(24,23,76,0.12);
+    overflow-x: auto;
+  }
+  .card h2{
+    margin-top:0;
+    font-size: 1.05em;
+    color: var(--navy);
+    border-bottom: 2px solid var(--lavender);
+    padding-bottom: 8px;
+  }
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    min-width: 600px;
+  }
+  th{
+    text-align: left;
+    background: var(--lavender);
+    color: var(--navy);
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+  td{
+    padding: 7px 10px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+  }
+  tr:nth-child(even) td{ background: #fafafd; }
+  .rank{
+    font-weight: bold;
+    color: var(--gold);
+    width: 30px;
+  }
+  .name-cell{ font-weight: bold; }
+  .badge{
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .badge-high{ background: var(--green); }
+  .badge-stable{ background: var(--blue); }
+  .badge-risk{ background: var(--red); }
+  .badge-unknown{ background: var(--gray); }
+
+  .kpi-pill{
+    display:inline-block;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    font-weight: bold;
+    color: #fff;
+  }
+  .kpi-eligible{ background: var(--green); }
+  .kpi-progress{ background: var(--amber); }
+  .kpi-nodata{ background: var(--gray); }
+
+  .status-msg{
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin-bottom: 16px;
+  }
+  .status-error{ background:#fbe9e9; color: var(--red); border: 1px solid var(--red); }
+  .status-loading{ background: var(--lavender); color: var(--navy); }
+
+  .note{
+    font-size: 0.75em;
+    color: var(--gray);
+    margin-top: 8px;
+  }
+
+  .grad-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .grad-card{
+    border: 1px solid var(--lavender);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .grad-card .name{
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 6px;
+  }
+  .grad-card .weekval{
+    font-size: 0.75em;
+    color: var(--gray);
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Client Development Associate — Weekly Performance</h1>
+    <div class="meta" id="lastUpdated">Not yet loaded</div>
+  </div>
+  <button class="refresh-btn" onclick="loadAll()">Refresh Now</button>
+</div>
+
+<div id="statusArea"></div>
+
+<div class="card">
+  <h2>Weekly Activity Leaderboard</h2>
+  <table id="leaderboardTable">
+    <thead>
+      <tr>
+        <th class="rank">#</th>
+        <th>Associate</th>
+        <th>Weekly Total</th>
+        <th>LinkedIn</th>
+        <th>Phone</th>
+        <th>Events</th>
+        <th>DM</th>
+        <th>Email</th>
+        <th>Other</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="note">Sorted by Weekly Contact Total, highest first. Blank rows and TEAM TOTAL are excluded.</div>
+</div>
+
+<div class="card">
+  <h2>200 KPI &amp; Graduation Eligibility</h2>
+  <div class="grad-grid" id="gradGrid"></div>
+  <div class="note">Green = 200+ logged for two consecutive weeks (graduation eligible). Amber = in progress this week. Gray = not enough weeks on record yet in History.</div>
+</div>
+
+<div class="card">
+  <h2>Compliance Scoring — Full Breakdown</h2>
+  <table id="scoringTable">
+    <thead>
+      <tr>
+        <th>Associate</th>
+        <th>CRM &amp; Pipeline Integrity %</th>
+        <th>Lead Response &amp; SLA %</th>
+        <th>Pipeline Discipline %</th>
+        <th>Execution Consistency %</th>
+        <th>Coaching %</th>
+        <th>Weighted Score</th>
+        <th>Interpretation</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+/* ================= CONFIGURATION ================= */
+// Reuses the same Google Cloud project / API key as the CEO Vision Tracker.
+// Paste the existing key below before publishing. Do not commit this file
+// to a public repo with the key filled in unless the key is restricted
+// (HTTP referrer + Sheets API only).
+const API_KEY = "YOUR_API_KEY_HERE";
+const SHEET_ID = "1ujwyY7WThRWJXlftxAaAFh41qNp9cGv3b8QjtkkDOu8";
+
+const TABS = {
+  teamSummary: "Team Summary",
+  scoring: "Scoring Calculator",
+  history: "History"
+};
+/* =================================================== */
+
+const EXCLUDE_NAMES = ["team total", ""];
+
+function isExcluded(name){
+  if(!name) return true;
+  const n = name.trim().toLowerCase();
+  return EXCLUDE_NAMES.includes(n);
+}
+
+// Finds the header row in a raw 2D values array by locating the first row
+// that contains a cell matching one of the candidate header labels.
+function findHeaderRowIndex(rows, candidates){
+  for(let i=0; i<rows.length; i++){
+    const rowLower = (rows[i] || []).map(c => (c||"").toString().trim().toLowerCase());
+    if(candidates.some(c => rowLower.includes(c.toLowerCase()))){
+      return i;
+    }
+  }
+  return 0;
+}
+
+function rowsToObjects(rows){
+  if(!rows || rows.length === 0) return [];
+  const headerIdx = findHeaderRowIndex(rows, ["associate", "associate name"]);
+  const headers = rows[headerIdx].map(h => (h||"").toString().trim());
+  const nameKey = headers.find(h => h.toLowerCase().includes("associate"));
+  const dataRows = rows.slice(headerIdx + 1);
+
+  const result = [];
+  for(const r of dataRows){
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (r[i] !== undefined ? r[i] : "").toString().trim(); });
+    const name = obj[nameKey];
+    // Stop as soon as we hit a blank associate cell — anything below that
+    // (notes, instructions, legends) is not associate data.
+    if(!name) break;
+    if(isExcluded(name)) continue;
+    result.push(obj);
+  }
+  return result;
+}
+
+function getAssociateName(obj){
+  const key = Object.keys(obj).find(k => k.toLowerCase().includes("associate"));
+  return (obj[key] || "").trim();
+}
+
+function num(v){
+  const n = parseFloat((v || "0").toString().replace(/[^0-9.\-]/g, ""));
+  return isNaN(n) ? 0 : n;
+}
+
+function interpretationClass(text){
+  const t = (text || "").toLowerCase();
+  if(t.includes("high")) return "badge-high";
+  if(t.includes("risk")) return "badge-risk";
+  if(t.includes("stable")) return "badge-stable";
+  return "badge-unknown";
+}
+
+function setStatus(html, type){
+  const area = document.getElementById("statusArea");
+  if(!html){ area.innerHTML = ""; return; }
+  area.innerHTML = `<div class="status-msg status-${type}">${html}</div>`;
+}
+
+async function fetchTabs(){
+  const ranges = Object.values(TABS).map(t => `ranges=${encodeURIComponent(t + "!A:Z")}`).join("&");
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values:batchGet?${ranges}&key=${API_KEY}`;
+  const res = await fetch(url);
+  if(!res.ok){
+    const errBody = await res.text();
+    throw new Error(`Sheets API error ${res.status}: ${errBody.slice(0,200)}`);
+  }
+  const data = await res.json();
+  const out = {};
+  const tabKeys = Object.keys(TABS);
+  data.valueRanges.forEach((vr, i) => { out[tabKeys[i]] = vr.values || []; });
+  return out;
+}
+
+function buildGraduationMap(historyObjs){
+  // Group by associate, sort by Week Ending (descending), check last 2 weeks.
+  const byAssociate = {};
+  historyObjs.forEach(obj => {
+    const name = getAssociateName(obj);
+    if(!byAssociate[name]) byAssociate[name] = [];
+    byAssociate[name].push(obj);
+  });
+
+  const weekKey = Object.keys(historyObjs[0] || {}).find(k => k.toLowerCase().includes("week of"));
+  const totalKey = Object.keys(historyObjs[0] || {}).find(k => k.toLowerCase().includes("weekly total"));
+
+  const result = {};
+  Object.keys(byAssociate).forEach(name => {
+    const entries = byAssociate[name].slice().sort((a,b) => {
+      const da = new Date(a[weekKey]);
+      const db = new Date(b[weekKey]);
+      if(isNaN(da) || isNaN(db)) return 0;
+      return db - da;
+    });
+    const lastTwo = entries.slice(0, 2);
+    if(lastTwo.length < 2){
+      result[name] = { status: "nodata" };
+    } else {
+      const bothMet = lastTwo.every(e => num(e[totalKey]) >= 200);
+      result[name] = { status: bothMet ? "eligible" : "progress" };
+    }
+  });
+  return result;
+}
+
+function gradCardHtml(name, thisWeek, gradMap){
+  const grad = gradMap[name] || { status: "nodata" };
+  let pillClass = "kpi-nodata";
+  let pillText = "Building history";
+  if(grad.status === "eligible"){ pillClass = "kpi-eligible"; pillText = "Graduation Eligible"; }
+  else if(grad.status === "progress"){ pillClass = "kpi-progress"; pillText = "In Progress"; }
+
+  return `<div class="grad-card">
+    <div class="name">${name}</div>
+    <span class="kpi-pill ${pillClass}">${pillText}</span>
+    <div class="weekval">${thisWeek} / 200 this wk</div>
+  </div>`;
+}
+
+async function loadAll(){
+  setStatus("Loading live data from Google Sheets…", "loading");
+  try{
+    const tabs = await fetchTabs();
+
+    const teamSummary = rowsToObjects(tabs.teamSummary);
+    const scoring = rowsToObjects(tabs.scoring);
+    const history = rowsToObjects(tabs.history);
+
+    const gradMap = history.length ? buildGraduationMap(history) : {};
+
+    // Leaderboard
+    const weeklyKey = Object.keys(teamSummary[0] || {}).find(k => k.toLowerCase().includes("weekly contact total"));
+    const sorted = teamSummary.slice().sort((a,b) => num(b[weeklyKey]) - num(a[weeklyKey]));
+
+    const lbBody = document.querySelector("#leaderboardTable tbody");
+    lbBody.innerHTML = sorted.map((obj, i) => {
+      const name = getAssociateName(obj);
+      const li = Object.keys(obj).find(k => k.toLowerCase() === "linkedin") || "LinkedIn";
+      const ph = Object.keys(obj).find(k => k.toLowerCase() === "phone") || "Phone";
+      const ev = Object.keys(obj).find(k => k.toLowerCase() === "events") || "Events";
+      const dm = Object.keys(obj).find(k => k.toLowerCase() === "dm") || "DM";
+      const em = Object.keys(obj).find(k => k.toLowerCase() === "email") || "Email";
+      const ot = Object.keys(obj).find(k => k.toLowerCase() === "other") || "Other";
+      return `<tr>
+        <td class="rank">${i+1}</td>
+        <td class="name-cell">${name}</td>
+        <td>${obj[weeklyKey] || 0}</td>
+        <td>${obj[li] || 0}</td>
+        <td>${obj[ph] || 0}</td>
+        <td>${obj[ev] || 0}</td>
+        <td>${obj[dm] || 0}</td>
+        <td>${obj[em] || 0}</td>
+        <td>${obj[ot] || 0}</td>
+      </tr>`;
+    }).join("");
+
+    // Graduation Eligibility grid — shown for every associate, no gating
+    const gradGrid = document.getElementById("gradGrid");
+    gradGrid.innerHTML = sorted.map(obj => {
+      const name = getAssociateName(obj);
+      const thisWeek = num(obj[weeklyKey]);
+      return gradCardHtml(name, thisWeek, gradMap);
+    }).join("");
+
+    // Scoring breakdown
+    const scBody = document.querySelector("#scoringTable tbody");
+    scBody.innerHTML = scoring.map(obj => {
+      const name = getAssociateName(obj);
+      const get = (frag) => {
+        const k = Object.keys(obj).find(kk => kk.toLowerCase().includes(frag));
+        return k ? obj[k] : "";
+      };
+      const interp = get("interpretation");
+      return `<tr>
+        <td class="name-cell">${name}</td>
+        <td>${get("crm")}</td>
+        <td>${get("lead response")}</td>
+        <td>${get("pipeline discipline")}</td>
+        <td>${get("execution")}</td>
+        <td>${get("coaching")}</td>
+        <td><strong>${get("weighted score")}</strong></td>
+        <td><span class="badge ${interpretationClass(interp)}">${interp}</span></td>
+      </tr>`;
+    }).join("");
+
+    document.getElementById("lastUpdated").textContent =
+      "Last updated: " + new Date().toLocaleString();
+    setStatus("", "loading");
+
+  } catch(err){
+    console.error(err);
+    setStatus(
+      `Could not load live data. Check that the sheet is shared as "Anyone with the link — Viewer" and that the API key is valid and has Sheets API enabled.<br><br><em>${err.message}</em>`,
+      "error"
+    );
+  }
+}
+
+loadAll();
+setInterval(loadAll, 5 * 60 * 1000); // auto-refresh every 5 minutes
+</script>
+
+</body>
+</html>
