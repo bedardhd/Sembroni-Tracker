@@ -156,7 +156,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="dept-row"><div class="dept-ind dot-green" id="d1dot"></div><div class="dept-name">Operations</div><div class="dept-note" id="d1note">—</div><div class="dept-owner">Andres</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d2dot"></div><div class="dept-name">Sales</div><div class="dept-note" id="d2note">—</div><div class="dept-owner">Sebastian</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d3dot"></div><div class="dept-name">Marketing</div><div class="dept-note" id="d3note">—</div><div class="dept-owner">Domenica</div></div>
-      <div class="dept-row"><div class="dept-ind dot-green" id="d4dot"></div><div class="dept-name">Financial · Accounting</div><div class="dept-note" id="d4note">—</div><div class="dept-owner">Matt · Marilyn</div></div>
+      <div class="dept-row"><div class="dept-ind dot-green" id="d4dot"></div><div class="dept-name">Financial · Accounting</div><div class="dept-note" id="d4note">—</div><div class="dept-owner">Matt · Ivanot</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d5dot"></div><div class="dept-name">Tax</div><div class="dept-note" id="d5note">—</div><div class="dept-owner">German</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d6dot"></div><div class="dept-name">Technology · CRM</div><div class="dept-note" id="d6note">—</div><div class="dept-owner">Derrick</div></div>
     </div>
@@ -208,6 +208,11 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
         <div style="font-family:Montserrat,sans-serif;font-size:18px;font-weight:800;color:#18174c;" id="revSFGVal">—</div>
         <div class="card-goal">Goal: <span>$96K</span></div>
         <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="revSFGBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Accounts Receivable</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:18px;font-weight:800;color:#18174c;" id="revARVal">—</div>
+        <div class="card-goal">Matt inputs weekly</div>
       </div>
     </div>
     <div style="padding:12px 24px;display:flex;align-items:center;gap:16px;">
@@ -421,32 +426,32 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     var rows = json.values || [];
     if (json.error) { set("weekOf", "Error: " + json.error.message); return; }
 
-    // Rows 0-15: core data
+    // Row 0: weekOf
     set("weekOf", val(rows, 0, 1));
-    // Revenue handled in extendRender
-    // Capacity handled in extendRender
-    set("headcountVal", val(rows, 11, 1) || "—");
-    setBar("headcountBar", num(val(rows, 11, 1)), 50);
-    set("clientsVal", val(rows, 12, 1) || "—");
-    setBar("clientsBar", num(val(rows, 12, 1)), 100);
-    set("pipelineVal", money(num(val(rows, 6, 1))));
-    set("openRolesVal", val(rows, 13, 1) || "—");
+    // Revenue rows 1-5 + A/R row 5 handled in extendRender
+    // Capacity rows 9-11 handled in extendRender
+    set("headcountVal", val(rows, 12, 1) || "—");
+    setBar("headcountBar", num(val(rows, 12, 1)), 50);
+    set("clientsVal", val(rows, 13, 1) || "—");
+    setBar("clientsBar", num(val(rows, 13, 1)), 100);
+    set("pipelineVal", money(num(val(rows, 7, 1))));
+    set("openRolesVal", val(rows, 14, 1) || "—");
 
-    // Rows 16-21: rocks (0-indexed: 16,17,18,19,20,21)
-    setRock(1, status(val(rows, 16, 1)), val(rows, 17, 1));
-    setRock(2, status(val(rows, 18, 1)), val(rows, 19, 1));
-    setRock(3, status(val(rows, 20, 1)), val(rows, 21, 1));
+    // Rocks (rows 17-22, 0-indexed)
+    setRock(1, status(val(rows, 17, 1)), val(rows, 18, 1));
+    setRock(2, status(val(rows, 19, 1)), val(rows, 20, 1));
+    setRock(3, status(val(rows, 21, 1)), val(rows, 22, 1));
 
-    // Rows 22-33: departments (0-indexed)
-    setDot("d1dot", status(val(rows, 22, 1))); set("d1note", val(rows, 23, 1));
-    setDot("d2dot", status(val(rows, 24, 1))); set("d2note", val(rows, 25, 1));
-    setDot("d3dot", status(val(rows, 26, 1))); set("d3note", val(rows, 27, 1));
-    setDot("d4dot", status(val(rows, 28, 1))); set("d4note", val(rows, 29, 1));
-    setDot("d5dot", status(val(rows, 30, 1))); set("d5note", val(rows, 31, 1));
-    setDot("d6dot", status(val(rows, 32, 1))); set("d6note", val(rows, 33, 1));
+    // Departments (rows 23-34, 0-indexed)
+    setDot("d1dot", status(val(rows, 23, 1))); set("d1note", val(rows, 24, 1));
+    setDot("d2dot", status(val(rows, 25, 1))); set("d2note", val(rows, 26, 1));
+    setDot("d3dot", status(val(rows, 27, 1))); set("d3note", val(rows, 28, 1));
+    setDot("d4dot", status(val(rows, 29, 1))); set("d4note", val(rows, 30, 1));
+    setDot("d5dot", status(val(rows, 31, 1))); set("d5note", val(rows, 32, 1));
+    setDot("d6dot", status(val(rows, 33, 1))); set("d6note", val(rows, 34, 1));
 
-    // Row 34: flag
-    var flag = val(rows, 34, 1);
+    // Row 35: flag
+    var flag = val(rows, 35, 1);
     var flagEl = document.getElementById("flagText");
     if (flagEl && flag) { flagEl.textContent = flag; flagEl.classList.remove("empty"); }
 
@@ -465,13 +470,16 @@ function setCapacity(vid, bid, cur, max) {
 }
 
 function extendRender(rows) {
-  // Revenue (rows 1-5)
+  // Revenue (rows 1-5, A/R row 5)
   var rt = num(val(rows, 1, 1));
   if (rt) {
     document.getElementById("revTotalVal").textContent = money(rt);
     var b = document.getElementById("revTotalBar");
     if (b) { var p = Math.min((rt/10900000)*100,100); b.style.width=p+"%"; b.style.height="8px"; b.className="bar "+barColor(p); }
   }
+  // A/R row 5
+  var arEl = document.getElementById("revARVal");
+  if (arEl) arEl.textContent = money(num(val(rows, 5, 1))) || "—";
   var entities = [
     {id:"revSDTax", row:2, goal:5565000},
     {id:"revSC",    row:3, goal:4686000},
@@ -492,7 +500,7 @@ function extendRender(rows) {
   // Reps
   // Reps start at row 35 (0-indexed), groups of 3: name(col1), meetings(col1 next row), closed(col1 next row)
   var repData = [];
-  var repStart = 35;
+  var repStart = 36;
   for (var repIdx = 0; repIdx < 8; repIdx++) {
     var nameRow = repStart + (repIdx * 3);
     var repName = val(rows, nameRow, 1);
@@ -518,12 +526,12 @@ function extendRender(rows) {
   }
 
   // Capacity
-  setCapacity("sellersVal",     "sellersBar",     num(val(rows,8,1)),  4);
-  setCapacity("scConsultVal",   "scConsultBar",   num(val(rows,9,1)),  4);
-  setCapacity("taxAdvisorsVal", "taxAdvisorsBar", num(val(rows,10,1)), 5);
+  setCapacity("sellersVal",     "sellersBar",     num(val(rows,9,1)),  4);
+  setCapacity("scConsultVal",   "scConsultBar",   num(val(rows,10,1)), 4);
+  setCapacity("taxAdvisorsVal", "taxAdvisorsBar", num(val(rows,11,1)), 5);
 
-  // Quarterly (rows 14,15)
-  var qData=[{q:"q3",row:14,target:5450000},{q:"q4",row:15,target:5450000}];
+  // Quarterly (rows 15,16)
+  var qData=[{q:"q3",row:15,target:5450000},{q:"q4",row:16,target:5450000}];
   for (var qi=0;qi<qData.length;qi++) {
     var qd=qData[qi], qa=num(val(rows,qd.row,1));
     var qEl=document.getElementById(qd.q+"actual");
