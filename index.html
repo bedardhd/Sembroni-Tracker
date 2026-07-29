@@ -363,10 +363,8 @@ function num(v) {
 }
 
 function money(n) {
-  if (!n) return "—";
-  if (n >= 1000000) return "$" + (n/1000000).toFixed(1) + "M";
-  if (n >= 1000) return "$" + (n/1000).toFixed(0) + "K";
-  return "$" + n;
+  if (!n && n !== 0) return "—";
+  return "$" + Number(n).toLocaleString("en-US", {minimumFractionDigits: 0, maximumFractionDigits: 0});
 }
 
 function pct(current, goal) {
@@ -490,7 +488,7 @@ function extendRender(rows) {
     document.getElementById(e.id+"Val").textContent = money(v);
     if (v) { var b2=document.getElementById(e.id+"Bar"); if(b2){var p2=Math.min((v/e.goal)*100,100);b2.style.width=p2+"%";b2.style.height="4px";b2.className="bar "+barColor(p2);} }
   }
-  var closes = num(val(rows, 5, 1));
+  var closes = num(val(rows, 6, 1));
   if (closes !== null) {
     document.getElementById("closesVal").textContent = closes;
     var cb = document.getElementById("closesBar");
