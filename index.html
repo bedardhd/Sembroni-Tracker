@@ -156,7 +156,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="dept-row"><div class="dept-ind dot-green" id="d1dot"></div><div class="dept-name">Operations</div><div class="dept-note" id="d1note">—</div><div class="dept-owner">Andres</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d2dot"></div><div class="dept-name">Sales</div><div class="dept-note" id="d2note">—</div><div class="dept-owner">Sebastian</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d3dot"></div><div class="dept-name">Marketing</div><div class="dept-note" id="d3note">—</div><div class="dept-owner">Domenica</div></div>
-      <div class="dept-row"><div class="dept-ind dot-green" id="d4dot"></div><div class="dept-name">Financial · Accounting</div><div class="dept-note" id="d4note">—</div><div class="dept-owner">Matt · Ivanot</div></div>
+      <div class="dept-row"><div class="dept-ind dot-green" id="d4dot"></div><div class="dept-name">Financial · Accounting</div><div class="dept-note" id="d4note">—</div><div class="dept-owner">Matt · Marilyn</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d5dot"></div><div class="dept-name">Tax</div><div class="dept-note" id="d5note">—</div><div class="dept-owner">German</div></div>
       <div class="dept-row"><div class="dept-ind dot-green" id="d6dot"></div><div class="dept-name">Technology · CRM</div><div class="dept-note" id="d6note">—</div><div class="dept-owner">Derrick</div></div>
     </div>
@@ -293,7 +293,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       </div>
       <div style="background:#f7f7fa;padding:16px;">
         <div class="card-label">H1 Already Booked</div>
-        <div style="font-family:Montserrat,sans-serif;font-size:18px;font-weight:800;color:#18174c;margin:4px 0;">$557K</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:18px;font-weight:800;color:#18174c;margin:4px 0;" id="h1Val">—</div>
         <div class="card-goal" style="color:#4caf87;font-weight:700;">Confirmed</div>
         <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-green" style="width:100%;height:4px;"></div></div>
       </div>
@@ -450,8 +450,8 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     setDot("d5dot", status(val(rows, 31, 1))); set("d5note", val(rows, 32, 1));
     setDot("d6dot", status(val(rows, 33, 1))); set("d6note", val(rows, 34, 1));
 
-    // Row 35: flag
-    var flag = val(rows, 35, 1);
+    // Row 37: flag (0-indexed: 36)
+    var flag = val(rows, 36, 1);
     var flagEl = document.getElementById("flagText");
     if (flagEl && flag) { flagEl.textContent = flag; flagEl.classList.remove("empty"); }
 
@@ -500,7 +500,7 @@ function extendRender(rows) {
   // Reps
   // Reps start at row 35 (0-indexed), groups of 3: name(col1), meetings(col1 next row), closed(col1 next row)
   var repData = [];
-  var repStart = 36;
+  var repStart = 37;
   for (var repIdx = 0; repIdx < 8; repIdx++) {
     var nameRow = repStart + (repIdx * 3);
     var repName = val(rows, nameRow, 1);
@@ -530,8 +530,12 @@ function extendRender(rows) {
   setCapacity("scConsultVal",   "scConsultBar",   num(val(rows,10,1)), 4);
   setCapacity("taxAdvisorsVal", "taxAdvisorsBar", num(val(rows,11,1)), 5);
 
-  // Quarterly (rows 15,16)
-  var qData=[{q:"q3",row:15,target:5450000},{q:"q4",row:16,target:5450000}];
+  // H1 actual (row 15, 0-indexed)
+  var h1El = document.getElementById("h1Val");
+  if (h1El) h1El.textContent = money(num(val(rows, 15, 1))) || "$557K";
+
+  // Quarterly (rows 16,17)
+  var qData=[{q:"q3",row:16,target:5450000},{q:"q4",row:17,target:5450000}];
   for (var qi=0;qi<qData.length;qi++) {
     var qd=qData[qi], qa=num(val(rows,qd.row,1));
     var qEl=document.getElementById(qd.q+"actual");
