@@ -47,18 +47,10 @@
   .header-left .subtitle {
     color: var(--lavender);
     font-size: 0.78em;
-    font-family: 'Arial', sans-serif;
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .last-updated {
-    color: var(--lavender);
-    font-size: 0.75em;
     font-family: Arial, sans-serif;
   }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .last-updated { color: var(--lavender); font-size: 0.75em; font-family: Arial, sans-serif; }
   .refresh-btn {
     background: var(--gold);
     color: var(--navy);
@@ -69,7 +61,6 @@
     font-size: 0.82em;
     font-weight: bold;
     cursor: pointer;
-    letter-spacing: 0.3px;
   }
   .refresh-btn:hover { opacity: 0.88; }
 
@@ -93,29 +84,20 @@
     align-items: center;
     justify-content: space-between;
   }
-  .rep-name {
-    color: var(--gold);
-    font-size: 1.05em;
-    letter-spacing: 0.3px;
-  }
+  .rep-name { color: var(--gold); font-size: 1.05em; letter-spacing: 0.3px; }
   .card-body { padding: 16px 18px; }
 
-  /* KPI row */
   .kpi-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin-bottom: 16px;
   }
-  .kpi-box {
-    border-radius: 8px;
-    padding: 10px 8px;
-    text-align: center;
-  }
+  .kpi-box { border-radius: 8px; padding: 10px 8px; text-align: center; }
   .kpi-box.on-track { background: var(--green-light); border: 1px solid #b2dfc5; }
-  .kpi-box.at-risk   { background: var(--amber-light); border: 1px solid #f0d98a; }
-  .kpi-box.behind    { background: var(--red-light);   border: 1px solid #f0bcbc; }
-  .kpi-box.no-data   { background: #f4f4f8; border: 1px solid #ddd; }
+  .kpi-box.at-risk  { background: var(--amber-light); border: 1px solid #f0d98a; }
+  .kpi-box.behind   { background: var(--red-light);   border: 1px solid #f0bcbc; }
+  .kpi-box.no-data  { background: #f4f4f8; border: 1px solid #ddd; }
 
   .kpi-label {
     font-family: Arial, sans-serif;
@@ -125,24 +107,13 @@
     color: var(--gray);
     margin-bottom: 4px;
   }
-  .kpi-value {
-    font-size: 1.4em;
-    font-weight: bold;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
+  .kpi-value { font-size: 1.4em; font-weight: bold; line-height: 1; margin-bottom: 2px; }
   .kpi-box.on-track .kpi-value { color: var(--green); }
-  .kpi-box.at-risk .kpi-value  { color: var(--amber); }
-  .kpi-box.behind .kpi-value   { color: var(--red); }
-  .kpi-box.no-data .kpi-value  { color: var(--gray); }
+  .kpi-box.at-risk  .kpi-value { color: var(--amber); }
+  .kpi-box.behind   .kpi-value { color: var(--red); }
+  .kpi-box.no-data  .kpi-value { color: var(--gray); }
+  .kpi-goal { font-family: Arial, sans-serif; font-size: 0.68em; color: var(--gray); }
 
-  .kpi-goal {
-    font-family: Arial, sans-serif;
-    font-size: 0.68em;
-    color: var(--gray);
-  }
-
-  /* Touchpoints section */
   .section-label {
     font-family: Arial, sans-serif;
     font-size: 0.67em;
@@ -157,12 +128,7 @@
     gap: 6px;
     margin-bottom: 10px;
   }
-  .tp-cell {
-    background: var(--bg);
-    border-radius: 6px;
-    padding: 7px 6px;
-    text-align: center;
-  }
+  .tp-cell { background: var(--bg); border-radius: 6px; padding: 7px 6px; text-align: center; }
   .tp-cell-label {
     font-family: Arial, sans-serif;
     font-size: 0.62em;
@@ -171,13 +137,8 @@
     letter-spacing: 0.4px;
     margin-bottom: 2px;
   }
-  .tp-cell-value {
-    font-size: 1em;
-    font-weight: bold;
-    color: var(--navy);
-  }
+  .tp-cell-value { font-size: 1em; font-weight: bold; color: var(--navy); }
 
-  /* Weekly total bar */
   .total-bar {
     background: var(--bg);
     border-radius: 8px;
@@ -186,31 +147,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    margin-bottom: 10px;
   }
-  .total-bar-left {
-    font-family: Arial, sans-serif;
-    font-size: 0.72em;
-    color: var(--gray);
-  }
-  .total-bar-right {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-  }
-  .total-number {
-    font-size: 1.35em;
-    font-weight: bold;
-  }
-  .total-goal {
-    font-family: Arial, sans-serif;
-    font-size: 0.72em;
-    color: var(--gray);
-  }
-  .total-bar.met .total-number   { color: var(--green); }
+  .total-bar-left { font-family: Arial, sans-serif; font-size: 0.72em; color: var(--gray); }
+  .total-bar-right { display: flex; align-items: baseline; gap: 4px; }
+  .total-number { font-size: 1.35em; font-weight: bold; }
+  .total-goal { font-family: Arial, sans-serif; font-size: 0.72em; color: var(--gray); }
+  .total-bar.met   .total-number { color: var(--green); }
   .total-bar.close .total-number { color: var(--amber); }
   .total-bar.behind .total-number{ color: var(--red); }
 
-  /* Progress bar */
   .progress-wrap {
     margin-top: 6px;
     background: #e0e0ea;
@@ -218,27 +164,35 @@
     height: 5px;
     overflow: hidden;
   }
-  .progress-fill {
-    height: 100%;
-    border-radius: 99px;
-    transition: width 0.4s ease;
-  }
+  .progress-fill { height: 100%; border-radius: 99px; }
   .met   .progress-fill { background: var(--green); }
   .close .progress-fill { background: var(--amber); }
   .behind .progress-fill{ background: var(--red); }
 
-  /* Loading / error */
+  /* Graduation badge */
+  .grad-badge {
+    border-radius: 8px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 0.75em;
+  }
+  .grad-badge.eligible   { background: var(--green-light); border: 1px solid #b2dfc5; color: var(--green); }
+  .grad-badge.not-yet    { background: #f4f4f8; border: 1px solid #ddd; color: var(--gray); }
+  .grad-badge .badge-icon { font-size: 1.1em; }
+  .grad-badge .badge-text { line-height: 1.3; }
+  .grad-badge .badge-text strong { display: block; }
+
+  .divider { height: 1px; background: var(--lavender); margin: 14px 0; }
+
   .status-msg {
     text-align: center;
     padding: 60px 20px;
     color: var(--gray);
     font-family: Arial, sans-serif;
     font-size: 0.9em;
-  }
-  .divider {
-    height: 1px;
-    background: var(--lavender);
-    margin: 14px 0;
   }
 </style>
 </head>
@@ -260,50 +214,64 @@
 </div>
 
 <script>
-const SHEET_ID  = '1ujwyY7WThRWJXlftxAaAFh41qNp9cGv3b8QjtkkDOu8';
-const API_KEY   = 'AIzaSyCKnPHKRlDNyI74Ui223US7RhH7GxrG8bc';
-const TEAM_REPS = ['Stephanie','Manny','Sebastian','Kevin','Luke','Brad','Latoya'];
+const SHEET_ID = '1ujwyY7WThRWJXlftxAaAFh41qNp9cGv3b8QjtkkDOu8';
+const API_KEY  = 'AIzaSyCKnPHKRlDNyI74Ui223US7RhH7GxrG8bc';
+
+// Founders: pipeline KPIs only
+const FOUNDERS = ['Stephanie', 'Manny'];
+// Associates: pipeline KPIs + touchpoints + graduation check
+const ASSOCIATES = ['Sebastian', 'Kevin', 'Luke', 'Brad', 'Latoya'];
+// Display order
+const ALL_REPS = [...FOUNDERS, ...ASSOCIATES];
 
 const GOALS = { mtf: 32, closes: 8, clients: 4, touchpoints: 200 };
+
+// Associate tab names (exact match)
+const ASSOC_TABS = {
+  'Sebastian': 'Sebastian',
+  'Kevin':     'Kevin',
+  'Luke':      'Luke',
+  'Brad':      'Brad',
+  'Latoya':    'Latoya'
+};
 
 async function fetchRange(sheetName, range) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName + '!' + range)}?key=${API_KEY}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Sheet fetch failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Fetch failed for ${sheetName}: ${res.status}`);
   const data = await res.json();
   return data.values || [];
 }
 
 function parseTeamSummary(rows) {
-  // Find header row, then parse rep rows
   const map = {};
   let headerIdx = -1;
   for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    if (row.some(c => /linkedin/i.test(c))) { headerIdx = i; break; }
+    if (rows[i].some(c => /linkedin/i.test(c))) { headerIdx = i; break; }
   }
   if (headerIdx === -1) return map;
-  const headers = rows[headerIdx].map(h => h.trim().toLowerCase());
-  const liIdx    = headers.findIndex(h => /linkedin/i.test(h));
-  const phoneIdx = headers.findIndex(h => /phone|cold/i.test(h));
-  const eventIdx = headers.findIndex(h => /event|network/i.test(h));
-  const dmIdx    = headers.findIndex(h => /dm|text/i.test(h));
-  const emailIdx = headers.findIndex(h => /email/i.test(h));
-  const otherIdx = headers.findIndex(h => /other/i.test(h));
-  const totalIdx = headers.findIndex(h => /total/i.test(h));
-
+  const h = rows[headerIdx].map(s => s.trim().toLowerCase());
+  const idx = {
+    li:    h.findIndex(s => /linkedin/i.test(s)),
+    phone: h.findIndex(s => /phone|cold/i.test(s)),
+    event: h.findIndex(s => /event|network/i.test(s)),
+    dm:    h.findIndex(s => /dm|text/i.test(s)),
+    email: h.findIndex(s => /email/i.test(s)),
+    other: h.findIndex(s => /other/i.test(s)),
+    total: h.findIndex(s => /total/i.test(s)),
+  };
   for (let i = headerIdx + 1; i < rows.length; i++) {
     const row = rows[i];
     const name = (row[0] || '').trim();
     if (!name || /total/i.test(name)) continue;
     map[name.toLowerCase()] = {
-      linkedin : parseInt(row[liIdx]    || 0) || 0,
-      phone    : parseInt(row[phoneIdx] || 0) || 0,
-      events   : parseInt(row[eventIdx] || 0) || 0,
-      dm       : parseInt(row[dmIdx]    || 0) || 0,
-      email    : parseInt(row[emailIdx] || 0) || 0,
-      other    : parseInt(row[otherIdx] || 0) || 0,
-      total    : parseInt(row[totalIdx] || 0) || 0,
+      linkedin: parseInt(row[idx.li]    || 0) || 0,
+      phone:    parseInt(row[idx.phone] || 0) || 0,
+      events:   parseInt(row[idx.event] || 0) || 0,
+      dm:       parseInt(row[idx.dm]    || 0) || 0,
+      email:    parseInt(row[idx.email] || 0) || 0,
+      other:    parseInt(row[idx.other] || 0) || 0,
+      total:    parseInt(row[idx.total] || 0) || 0,
     };
   }
   return map;
@@ -316,59 +284,98 @@ function parseGHL(rows) {
     if (rows[i].some(c => /associate/i.test(c))) { headerIdx = i; break; }
   }
   if (headerIdx === -1) return map;
-  const headers = rows[headerIdx].map(h => h.trim().toLowerCase());
-  const mtfIdx     = headers.findIndex(h => /meet.*founder|mtf/i.test(h));
-  const closesIdx  = headers.findIndex(h => /game plan|close/i.test(h));
-  const clientsIdx = headers.findIndex(h => /confirmed/i.test(h));
-
+  const h = rows[headerIdx].map(s => s.trim().toLowerCase());
+  const mtfIdx     = h.findIndex(s => /meet.*founder|mtf/i.test(s));
+  const closesIdx  = h.findIndex(s => /game plan|close/i.test(s));
+  const clientsIdx = h.findIndex(s => /confirmed/i.test(s));
   for (let i = headerIdx + 1; i < rows.length; i++) {
     const row = rows[i];
     const name = (row[0] || '').trim();
     if (!name) continue;
     map[name.toLowerCase()] = {
-      mtf     : parseInt(row[mtfIdx]     || 0) || 0,
-      closes  : parseInt(row[closesIdx]  || 0) || 0,
-      clients : parseInt(row[clientsIdx] || 0) || 0,
+      mtf:     parseInt(row[mtfIdx]     || 0) || 0,
+      closes:  parseInt(row[closesIdx]  || 0) || 0,
+      clients: parseInt(row[clientsIdx] || 0) || 0,
     };
   }
   return map;
 }
 
+// Read rep's History section starting at A17:B (row 17 onward, 0-indexed = row 16)
+// Returns last two Weekly Total values (column B = index 1)
+function parseRepHistory(rows) {
+  // rows passed in are from A17:B50 — just data rows
+  const totals = [];
+  for (let i = 0; i < rows.length; i++) {
+    const val = parseInt((rows[i][1] || '').toString().trim()) || 0;
+    if (rows[i][0] || rows[i][1]) totals.push(val); // skip fully blank rows
+  }
+  return totals; // chronological order, we want last two
+}
+
+function gradEligible(totals) {
+  if (totals.length < 2) return false;
+  const last2 = totals.slice(-2);
+  return last2[0] >= GOALS.touchpoints && last2[1] >= GOALS.touchpoints;
+}
+
 function kpiStatus(val, goal) {
   const pct = goal > 0 ? val / goal : 0;
-  if (pct >= 1)    return 'on-track';
-  if (pct >= 0.7)  return 'at-risk';
+  if (pct >= 1)   return 'on-track';
+  if (pct >= 0.7) return 'at-risk';
   return 'behind';
 }
 
 function touchStatus(total) {
-  if (total >= GOALS.touchpoints)         return 'met';
-  if (total >= GOALS.touchpoints * 0.75)  return 'close';
+  if (total >= GOALS.touchpoints)        return 'met';
+  if (total >= GOALS.touchpoints * 0.75) return 'close';
   return 'behind';
 }
 
 function kpiBox(label, value, goal) {
   const status = kpiStatus(value, goal);
-  const hasData = value > 0 || true; // always show
-  return `
-    <div class="kpi-box ${hasData ? status : 'no-data'}">
-      <div class="kpi-label">${label}</div>
-      <div class="kpi-value">${value}</div>
-      <div class="kpi-goal">Goal: ${goal}</div>
-    </div>`;
+  return `<div class="kpi-box ${status}">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value">${value}</div>
+    <div class="kpi-goal">Goal: ${goal}</div>
+  </div>`;
 }
 
-function repCard(name, summary, ghl) {
+function founderCard(name, ghl) {
+  const g = ghl || { mtf:0, closes:0, clients:0 };
+  return `<div class="rep-card">
+    <div class="card-header"><div class="rep-name">${name}</div></div>
+    <div class="card-body">
+      <div class="section-label">Pipeline KPIs</div>
+      <div class="kpi-row">
+        ${kpiBox('MTF Meetings', g.mtf, GOALS.mtf)}
+        ${kpiBox('Closes', g.closes, GOALS.closes)}
+        ${kpiBox('Confirmed Clients', g.clients, GOALS.clients)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function associateCard(name, summary, ghl, historyTotals) {
   const tp = summary || { linkedin:0, phone:0, events:0, dm:0, email:0, other:0, total:0 };
   const g  = ghl     || { mtf:0, closes:0, clients:0 };
   const ts = touchStatus(tp.total);
   const pct = Math.min(100, Math.round((tp.total / GOALS.touchpoints) * 100));
+  const eligible = gradEligible(historyTotals);
+  const weeksLogged = historyTotals.length;
 
-  return `
-  <div class="rep-card">
-    <div class="card-header">
-      <div class="rep-name">${name}</div>
-    </div>
+  const gradHTML = eligible
+    ? `<div class="grad-badge eligible">
+        <div class="badge-icon">🎓</div>
+        <div class="badge-text"><strong>Eligible for Graduation</strong>200+ contacts two weeks in a row</div>
+      </div>`
+    : `<div class="grad-badge not-yet">
+        <div class="badge-icon">📋</div>
+        <div class="badge-text"><strong>SMP In Progress</strong>${weeksLogged < 2 ? `${weeksLogged} of 2 weeks logged` : 'Has not hit 200 two consecutive weeks yet'}</div>
+      </div>`;
+
+  return `<div class="rep-card">
+    <div class="card-header"><div class="rep-name">${name}</div></div>
     <div class="card-body">
       <div class="section-label">Pipeline KPIs</div>
       <div class="kpi-row">
@@ -389,42 +396,57 @@ function repCard(name, summary, ghl) {
       <div class="total-bar ${ts}">
         <div class="total-bar-left">
           Weekly Total
-          <div class="progress-wrap">
-            <div class="progress-fill" style="width:${pct}%"></div>
-          </div>
+          <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
         </div>
         <div class="total-bar-right">
           <span class="total-number">${tp.total}</span>
           <span class="total-goal">/ ${GOALS.touchpoints}</span>
         </div>
       </div>
+      ${gradHTML}
     </div>
   </div>`;
 }
 
 async function loadData() {
-  const grid = document.getElementById('grid');
+  const grid  = document.getElementById('grid');
   const updEl = document.getElementById('lastUpdated');
   grid.innerHTML = '<div class="status-msg">Loading...</div>';
 
   try {
-    const [summaryRows, ghlRows] = await Promise.all([
+    // Fetch Team Summary, GHL, and each associate's history in parallel
+    const historyFetches = ASSOCIATES.map(name =>
+      fetchRange(ASSOC_TABS[name], 'A17:B200').catch(() => [])
+    );
+
+    const [summaryRows, ghlRows, ...historyResults] = await Promise.all([
       fetchRange('Team Summary', 'A1:I50'),
       fetchRange('GHL Performance Data', 'A1:D30'),
+      ...historyFetches,
     ]);
 
     const summaryMap = parseTeamSummary(summaryRows);
     const ghlMap     = parseGHL(ghlRows);
 
-    const cards = TEAM_REPS.map(name => {
+    // Map associate name -> parsed history totals
+    const historyMap = {};
+    ASSOCIATES.forEach((name, i) => {
+      historyMap[name] = parseRepHistory(historyResults[i]);
+    });
+
+    const cards = ALL_REPS.map(name => {
       const key = name.toLowerCase();
-      return repCard(name, summaryMap[key], ghlMap[key]);
+      if (FOUNDERS.includes(name)) {
+        return founderCard(name, ghlMap[key]);
+      } else {
+        return associateCard(name, summaryMap[key], ghlMap[key], historyMap[name]);
+      }
     }).join('');
 
     grid.innerHTML = cards || '<div class="status-msg">No data found. Check sheet sharing and tab names.</div>';
     updEl.textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
   } catch (err) {
-    grid.innerHTML = `<div class="status-msg">Could not load data. Check that the sheet is shared and the API key is valid.<br><br><small>${err.message}</small></div>`;
+    grid.innerHTML = `<div class="status-msg">Could not load data. Check sheet sharing and API key.<br><br><small>${err.message}</small></div>`;
     updEl.textContent = 'Load failed';
     console.error(err);
   }
