@@ -402,7 +402,10 @@ function setBar(barId, current, goal) {
 
 function setDot(dotId, st) {
   var el = document.getElementById(dotId);
-  if (el) el.className = "dept-ind dot-" + st;
+  if (el) {
+    el.className = "dept-ind dot-" + (st || "yellow");
+    el.title = st; // shows value on hover for debugging
+  }
 }
 
 function setRock(n, st, update) {
