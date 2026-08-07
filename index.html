@@ -1,3 +1,12 @@
+How and when new hires get paid
+
+• Paid bi-weekly via direct deposit through ADP
+
+• Payment issued every other Friday, the day after each pay period closes
+
+• Contractors are paid based on client calls completed or hours worked during the period
+
+• Salespeople are paid based on commission for client payments collected during the period
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -496,9 +505,10 @@ function extendRender(rows) {
     document.getElementById(e.id+"Val").textContent = money(v);
     if (v) { var b2=document.getElementById(e.id+"Bar"); if(b2){var p2=Math.min((v/e.goal)*100,100);b2.style.width=p2+"%";b2.style.height="4px";b2.className="bar "+barColor(p2);} }
   }
-  var closes = num(val(rows, 6, 1));
-  if (closes !== null) {
-    document.getElementById("closesVal").textContent = closes;
+  var closesRaw = val(rows, 6, 1);
+  var closes = closesRaw !== null ? parseFloat(String(closesRaw).replace(/[$,]/g, "")) : null;
+  if (closesRaw !== null) {
+    document.getElementById("closesVal").textContent = isNaN(closes) ? closesRaw : closes;
     var cb = document.getElementById("closesBar");
     if (cb) { var cp = Math.min((closes/100)*100,100); cb.style.width=cp+"%"; cb.className="bar "+barColor(cp); }
   }
