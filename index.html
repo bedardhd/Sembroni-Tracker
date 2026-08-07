@@ -515,6 +515,7 @@ function extendRender(rows) {
   if (tbody) {
     tbody.innerHTML = "";
     for (var ri=0;ri<repData.length;ri++) {
+      var rep=repData[ri];
       var m=val(rows,rep.mtf,1), c=val(rows,rep.closed,1), cl=val(rows,rep.closing,1);
       var tr=document.createElement("tr");
       tr.style.borderBottom="1px solid #dedfed";
