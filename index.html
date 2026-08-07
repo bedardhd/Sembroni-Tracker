@@ -401,11 +401,14 @@ function setBar(barId, current, goal) {
 }
 
 function setDot(dotId, st) {
+  var dotMap = {
+    green:  "dot-green",
+    yellow: "dot-yellow",
+    red:    "dot-red",
+    done:   "dot-green"
+  };
   var el = document.getElementById(dotId);
-  if (el) {
-    el.className = "dept-ind dot-" + (st || "yellow");
-    el.title = st; // shows value on hover for debugging
-  }
+  if (el) el.className = "dept-ind " + (dotMap[st] || "dot-yellow");
 }
 
 function setRock(n, st, update) {
