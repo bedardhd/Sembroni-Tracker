@@ -19,7 +19,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
 .north-star-eye { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: #c9a44e; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
 .north-star-text { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.5; }
 .north-star-text span { color: #c9a44e; }
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
 .card { background: #fff; border-radius: 6px; padding: 16px; border-top: 3px solid #89acc9; box-shadow: 0 1px 4px rgba(24,23,76,0.07); }
 .card-label { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: #6b6b80; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 6px; }
 .card-val { font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 800; color: #18174c; line-height: 1; }
@@ -111,6 +111,11 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="card-label">Open Roles</div>
       <div class="card-val" id="openRolesVal">—</div>
       <div class="card-goal">Currently hiring</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Last Month Revenue</div>
+      <div class="card-val" id="lastMonthVal">—</div>
+      <div class="card-goal">End of month actual</div>
     </div>
   </div>
 
@@ -236,6 +241,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
           <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Rep</th>
           <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Meet the Founders Booked</th>
           <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Game Plan Meetings Booked</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Final Meeting</th>
           <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Closing Total</th>
         </tr>
       </thead>
@@ -442,6 +448,7 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     setBar("clientsBar", num(val(rows, 13, 1)), 100);
     set("pipelineVal", money(num(val(rows, 7, 1))));
     set("openRolesVal", val(rows, 14, 1) || "—");
+  set("lastMonthVal", money(num(val(rows, 72, 1))));
 
     // Rocks (rows 17-22, 0-indexed)
     setRock(1, status(val(rows, 18, 1)), val(rows, 19, 1));
@@ -509,14 +516,15 @@ function extendRender(rows) {
   var repData = [];
   var repStart = 37;
   for (var repIdx = 0; repIdx < 10; repIdx++) {
-    var nameRow = repStart + (repIdx * 4);
+    var nameRow = repStart + (repIdx * 5);
     var repName = val(rows, nameRow, 1);
     if (!repName) break;
     repData.push({
       name: repName,
       mtf: nameRow + 1,
-      closed: nameRow + 2,
-      closing: nameRow + 3
+      gameplan: nameRow + 2,
+      closing: nameRow + 3,
+      final: nameRow + 4
     });
   }
   var tbody = document.getElementById("repsBody");
@@ -524,12 +532,14 @@ function extendRender(rows) {
     tbody.innerHTML = "";
     for (var ri=0;ri<repData.length;ri++) {
       var rep=repData[ri];
-      var m=val(rows,rep.mtf,1), c=val(rows,rep.closed,1), cl=val(rows,rep.closing,1);
+      var m=val(rows,rep.mtf,1), c=val(rows,rep.gameplan,1), cl=val(rows,rep.closing,1);
+      var fm=val(rows,rep.final,1);
       var tr=document.createElement("tr");
       tr.style.borderBottom="1px solid #dedfed";
       tr.innerHTML='<td style="padding:10px 20px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;color:#18174c;">'+rep.name+'</td>'+
         '<td style="padding:10px 20px;font-size:13px;color:'+(m?"#89acc9":"#6b6b80")+';">'+(m||"—")+'</td>'+
         '<td style="padding:10px 20px;font-size:13px;color:'+(c?"#89acc9":"#6b6b80")+';">'+(c||"—")+'</td>'+
+        '<td style="padding:10px 20px;font-size:13px;color:'+(fm?"#89acc9":"#6b6b80")+';">'+(fm||"—")+'</td>'+
         '<td style="padding:10px 20px;font-size:13px;color:'+(cl?"#4caf87":"#6b6b80")+';">'+(cl?money(num(cl)):"—")+'</td>';
       tbody.appendChild(tr);
     }
