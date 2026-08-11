@@ -115,12 +115,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
     <div class="card">
       <div class="card-label">Last Month Revenue</div>
       <div class="card-val" id="lastMonthVal">—</div>
-      <div class="card-goal">End of month actual</div>
-    </div></div>
-    </div>
-  </div>
-
-  <!-- THIS WEEK SUMMARY CARD -->
+      <!-- THIS WEEK SUMMARY CARD -->
   <div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(24,23,76,0.07);overflow:hidden;margin-bottom:14px;">
     <div style="background:#18174c;padding:10px 20px;display:flex;align-items:center;gap:10px;">
       <span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#c9a44e;background:rgba(201,164,78,0.15);border-radius:3px;padding:2px 7px;">TW</span>
@@ -625,8 +620,6 @@ function extendRender(rows) {
     var nameRow = repStart + (repIdx * 8);
     var repName = val(rows, nameRow, 1);
     if (!repName) break;
-    // Skip if name is a number (data entry error)
-    if (!isNaN(parseFloat(repName)) && repName !== null) continue;
     repData.push({
       name: repName,
       mtfTW: nameRow + 1,
@@ -703,3 +696,8 @@ function manswer(btn, v, idx) {
 
 </body>
 </html>
+
+  <div class="card-goal">End of month actual</div>
+    </div></div>
+    </div>
+  </div>
