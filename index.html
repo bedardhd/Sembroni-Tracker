@@ -91,9 +91,9 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
 
   <div class="cards">
     <div class="card">
-      <div class="card-label">Team · Capacity First</div>
+      <div class="card-label">Team Count</div>
       <div class="card-val" id="headcountVal">—</div>
-      <div class="card-goal">Hiring paused — capacity ramp in progress</div>
+      <div class="card-goal">Active employees + contractors</div>
       <div class="bar-wrap"><div class="bar bar-yellow" id="headcountBar" style="width:0%"></div></div>
     </div>
     <div class="card">
@@ -116,10 +116,80 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="card-label">Last Month Revenue</div>
       <div class="card-val" id="lastMonthVal">—</div>
       <div class="card-goal">End of month actual</div>
+    </div></div>
     </div>
   </div>
 
-  <div class="two-col">
+  <!-- THIS WEEK SUMMARY CARD -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(24,23,76,0.07);overflow:hidden;margin-bottom:14px;">
+    <div style="background:#18174c;padding:10px 20px;display:flex;align-items:center;gap:10px;">
+      <span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#c9a44e;background:rgba(201,164,78,0.15);border-radius:3px;padding:2px 7px;">TW</span>
+      <span style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.1em;">This Week — Associate Totals</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#dedfed;">
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Meetings</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="twTotalVal">0</div>
+        <div class="card-goal">All associates</div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total MTF Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="mtfTWVal">0</div>
+        <div class="card-goal">Goal: <span>32</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="mtfTWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Game Plans Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="gpTWVal">0</div>
+        <div class="card-goal">Goal: <span>8</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="gpTWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Final Meetings Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="finalTWVal">0</div>
+        <div class="card-goal">Goal: <span>4</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="finalTWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Closing</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#4caf87;" id="closingTWVal">$0</div>
+        <div class="card-goal">This week only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT WEEK SUMMARY CARD -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(24,23,76,0.07);overflow:hidden;margin-bottom:20px;">
+    <div style="background:#c9a44e;padding:10px 20px;display:flex;align-items:center;gap:10px;">
+      <span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#18174c;background:rgba(24,23,76,0.15);border-radius:3px;padding:2px 7px;">NW</span>
+      <span style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#18174c;text-transform:uppercase;letter-spacing:0.1em;">Next Week — Associate Totals</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#dedfed;">
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Meetings</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="nwTotalVal">0</div>
+        <div class="card-goal">All associates</div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total MTF Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="mtfNWVal">0</div>
+        <div class="card-goal">Goal: <span>32</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="mtfNWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Game Plans Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="gpNWVal">0</div>
+        <div class="card-goal">Goal: <span>8</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="gpNWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+      <div style="background:#fff;padding:14px 16px;">
+        <div class="card-label">Total Final Meetings Booked</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;color:#18174c;" id="finalNWVal">0</div>
+        <div class="card-goal">Goal: <span>4</span></div>
+        <div class="bar-wrap" style="margin-top:6px;"><div class="bar bar-yellow" id="finalNWBar" style="width:0%;height:4px;"></div></div>
+      </div>
+    </div>
+  </div>
     <div class="section">
       <div class="section-hdr">
         <span class="section-num">01</span>
@@ -232,20 +302,26 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
   <div class="section" style="margin-bottom:20px;">
     <div class="section-hdr">
       <span class="section-num">05</span>
-      <span class="section-title">Sales Rep Production</span>
+      <span class="section-title">CDA Production</span>
       <span class="section-sub"></span>
     </div>
     <table style="width:100%;border-collapse:collapse;">
       <thead>
-        <tr style="background:#f7f7fa;">
-          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Rep</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Meet the Founders Booked</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Game Plan Meetings Booked</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Final Meeting</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#89acc9;text-transform:uppercase;letter-spacing:0.1em;padding:10px 20px;text-align:left;border-bottom:1px solid #dedfed;">Closing Total</th>
+        <tr>
+          <th colspan="5" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;padding:8px 14px;background:#18174c;text-align:left;">This Week</th>
+          <th colspan="3" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#18174c;text-transform:uppercase;padding:8px 14px;background:#c9a44e;text-align:left;">Next Week</th>
         </tr>
-      </thead>
-      <tbody id="repsBody"></tbody>
+        <tr style="background:#f7f7fa;">
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Associate</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">MTF</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Game Plan</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Final</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Closing Total</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">MTF</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">Game Plan</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">Final</th>
+        </tr>
+      </thead>      <tbody id="repsBody"></tbody>
     </table>
   </div>
 
@@ -441,14 +517,44 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     // Row 0: weekOf
     set("weekOf", val(rows, 0, 1));
     // Revenue rows 1-5 + A/R row 5 handled in extendRender
-    // Capacity rows 9-11 handled in extendRender
+    function setMCard(vid,bid,actual,goal){
+    var el=document.getElementById(vid); if(el) el.textContent=actual;
+    if(bid){var bar=document.getElementById(bid);if(bar){var p=Math.min((actual/goal)*100,100);bar.style.width=p+"%";bar.className="bar "+barColor(p);}}
+  }
+  // This week totals
+  var twMTF=0, twGP=0, twFinal=0, twClosing=0;
+  var nwMTF=0, nwGP=0, nwFinal=0;
+  for (var si2=0; si2<repData.length; si2++) {
+    var sr2=repData[si2];
+    twMTF   += parseFloat(val(rows,sr2.mtfTW,1))||0;
+    twGP    += parseFloat(val(rows,sr2.gpTW,1))||0;
+    twFinal += parseFloat(val(rows,sr2.finalTW,1))||0;
+    twClosing += parseFloat(val(rows,sr2.closing,1))||0;
+    nwMTF   += parseFloat(val(rows,sr2.mtfNW,1))||0;
+    nwGP    += parseFloat(val(rows,sr2.gpNW,1))||0;
+    nwFinal += parseFloat(val(rows,sr2.finalNW,1))||0;
+  }
+  var twTot = twMTF + twGP + twFinal;
+  var nwTot = nwMTF + nwGP + nwFinal;
+  set("twTotalVal", twTot);
+  set("nwTotalVal", nwTot);
+  setMCard("mtfTWVal","mtfTWBar",twMTF,32);
+  setMCard("gpTWVal","gpTWBar",twGP,8);
+  setMCard("finalTWVal","finalTWBar",twFinal,4);
+  var closingTWEl=document.getElementById("closingTWVal");
+  if(closingTWEl) closingTWEl.textContent = twClosing > 0 ? money(twClosing) : "$0";
+  setMCard("mtfNWVal","mtfNWBar",nwMTF,32);
+  setMCard("gpNWVal","gpNWBar",nwGP,8);
+  setMCard("finalNWVal","finalNWBar",nwFinal,4);
+
+  // Capacity rows 9-11 handled in extendRender
     set("headcountVal", val(rows, 12, 1) || "—");
     setBar("headcountBar", num(val(rows, 12, 1)), 50);
     set("clientsVal", val(rows, 13, 1) || "—");
     setBar("clientsBar", num(val(rows, 13, 1)), 100);
     set("pipelineVal", money(num(val(rows, 7, 1))));
     set("openRolesVal", val(rows, 14, 1) || "—");
-  set("lastMonthVal", money(num(val(rows, 72, 1))));
+  set("lastMonthVal", money(num(val(rows, 93, 1))));
 
     // Rocks (rows 17-22, 0-indexed)
     setRock(1, status(val(rows, 18, 1)), val(rows, 19, 1));
@@ -516,15 +622,20 @@ function extendRender(rows) {
   var repData = [];
   var repStart = 37;
   for (var repIdx = 0; repIdx < 10; repIdx++) {
-    var nameRow = repStart + (repIdx * 5);
+    var nameRow = repStart + (repIdx * 8);
     var repName = val(rows, nameRow, 1);
     if (!repName) break;
+    // Skip if name is a number (data entry error)
+    if (!isNaN(parseFloat(repName)) && repName !== null) continue;
     repData.push({
       name: repName,
-      mtf: nameRow + 1,
-      gameplan: nameRow + 2,
+      mtfTW: nameRow + 1,
+      gpTW: nameRow + 2,
       closing: nameRow + 3,
-      final: nameRow + 4
+      finalTW: nameRow + 4,
+      mtfNW: nameRow + 5,
+      gpNW: nameRow + 6,
+      finalNW: nameRow + 7
     });
   }
   var tbody = document.getElementById("repsBody");
@@ -532,15 +643,19 @@ function extendRender(rows) {
     tbody.innerHTML = "";
     for (var ri=0;ri<repData.length;ri++) {
       var rep=repData[ri];
-      var m=val(rows,rep.mtf,1), c=val(rows,rep.gameplan,1), cl=val(rows,rep.closing,1);
-      var fm=val(rows,rep.final,1);
+      var mtfTW=val(rows,rep.mtfTW,1), gpTW=val(rows,rep.gpTW,1), finalTW=val(rows,rep.finalTW,1);
+      var cl=val(rows,rep.closing,1), mtfNW=val(rows,rep.mtfNW,1), gpNW=val(rows,rep.gpNW,1), finalNW=val(rows,rep.finalNW,1);
       var tr=document.createElement("tr");
       tr.style.borderBottom="1px solid #dedfed";
-      tr.innerHTML='<td style="padding:10px 20px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;color:#18174c;">'+rep.name+'</td>'+
-        '<td style="padding:10px 20px;font-size:13px;color:'+(m?"#89acc9":"#6b6b80")+';">'+(m||"—")+'</td>'+
-        '<td style="padding:10px 20px;font-size:13px;color:'+(c?"#89acc9":"#6b6b80")+';">'+(c||"—")+'</td>'+
-        '<td style="padding:10px 20px;font-size:13px;color:'+(fm?"#89acc9":"#6b6b80")+';">'+(fm||"—")+'</td>'+
-        '<td style="padding:10px 20px;font-size:13px;color:'+(cl?"#4caf87":"#6b6b80")+';">'+(cl?money(num(cl)):"—")+'</td>';
+      tr.innerHTML=
+        '<td style="padding:8px 14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;color:#18174c;">' + rep.name + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (mtfTW ? '#18174c' : '#6b6b80') + ';">' + (mtfTW || '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (gpTW ? '#18174c' : '#6b6b80') + ';">' + (gpTW || '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (finalTW ? '#18174c' : '#6b6b80') + ';">' + (finalTW || '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (cl ? '#4caf87' : '#6b6b80') + ';">' + (cl ? money(num(cl)) : '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (mtfNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (mtfNW || '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (gpNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (gpNW || '\u2014') + '</td>' +
+        '<td style="padding:8px 14px;font-size:12px;color:' + (finalNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (finalNW || '\u2014') + '</td>';
       tbody.appendChild(tr);
     }
   }
