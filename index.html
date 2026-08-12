@@ -365,25 +365,37 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <span class="section-num">07</span>
       <span class="section-title">CDA Production</span>
     </div>
-    <table style="width:100%;border-collapse:collapse;">
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed;min-width:760px;">
+      <colgroup>
+        <col style="width:16%;">
+        <col style="width:9%;">
+        <col style="width:12%;">
+        <col style="width:9%;">
+        <col style="width:14%;">
+        <col style="width:9%;">
+        <col style="width:12%;">
+        <col style="width:9%;">
+      </colgroup>
       <thead>
         <tr>
           <th colspan="5" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;padding:8px 14px;background:#18174c;text-align:left;">This Week</th>
           <th colspan="3" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#18174c;text-transform:uppercase;padding:8px 14px;background:#c9a44e;text-align:left;">Next Week</th>
         </tr>
         <tr style="background:#f7f7fa;">
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Associate</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">MTF</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Game Plan</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Final</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;">Closing Total</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">MTF</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">Game Plan</th>
-          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;">Final</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Associate</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">MTF</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Game Plan</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Final</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#89acc9;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Closing Total</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">MTF</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Game Plan</th>
+          <th style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#b8860b;text-transform:uppercase;padding:8px 14px;border-bottom:1px solid #dedfed;text-align:left;background:#fdf6e3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Final</th>
         </tr>
       </thead>
       <tbody id="repsBody"></tbody>
     </table>
+    </div>
   </div>
 
   <!-- MIRROR -->
@@ -520,37 +532,7 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     // Row 0: weekOf
     set("weekOf", val(rows, 0, 1));
     // Revenue rows 1-5 + A/R row 5 handled in extendRender
-    function setMCard(vid,bid,actual,goal){
-    var el=document.getElementById(vid); if(el) el.textContent=actual;
-    if(bid){var bar=document.getElementById(bid);if(bar){var p=Math.min((actual/goal)*100,100);bar.style.width=p+"%";bar.className="bar "+barColor(p);}}
-  }
-  // This week totals
-  var twMTF=0, twGP=0, twFinal=0, twClosing=0;
-  var nwMTF=0, nwGP=0, nwFinal=0;
-  for (var si2=0; si2<repData.length; si2++) {
-    var sr2=repData[si2];
-    twMTF   += parseFloat(val(rows,sr2.mtfTW,1))||0;
-    twGP    += parseFloat(val(rows,sr2.gpTW,1))||0;
-    twFinal += parseFloat(val(rows,sr2.finalTW,1))||0;
-    twClosing += parseFloat(val(rows,sr2.closing,1))||0;
-    nwMTF   += parseFloat(val(rows,sr2.mtfNW,1))||0;
-    nwGP    += parseFloat(val(rows,sr2.gpNW,1))||0;
-    nwFinal += parseFloat(val(rows,sr2.finalNW,1))||0;
-  }
-  var twTot = twMTF + twGP + twFinal;
-  var nwTot = nwMTF + nwGP + nwFinal;
-  set("twTotalVal", twTot);
-  set("nwTotalVal", nwTot);
-  setMCard("mtfTWVal","mtfTWBar",twMTF,32);
-  setMCard("gpTWVal","gpTWBar",twGP,8);
-  setMCard("finalTWVal","finalTWBar",twFinal,4);
-  var closingTWEl=document.getElementById("closingTWVal");
-  if(closingTWEl) closingTWEl.textContent = twClosing > 0 ? money(twClosing) : "$0";
-  setMCard("mtfNWVal","mtfNWBar",nwMTF,32);
-  setMCard("gpNWVal","gpNWBar",nwGP,8);
-  setMCard("finalNWVal","finalNWBar",nwFinal,4);
-
-  // Capacity rows 9-11 handled in extendRender
+    // Capacity rows 9-11 handled in extendRender
     set("headcountVal", val(rows, 12, 1) || "—");
     setBar("headcountBar", num(val(rows, 12, 1)), 50);
     set("clientsVal", val(rows, 13, 1) || "—");
@@ -639,6 +621,36 @@ function extendRender(rows) {
       finalNW: nameRow + 7
     });
   }
+  function setMCard(vid,bid,actual,goal){
+    var el=document.getElementById(vid); if(el) el.textContent=actual;
+    if(bid){var bar=document.getElementById(bid);if(bar){var p=Math.min((actual/goal)*100,100);bar.style.width=p+"%";bar.className="bar "+barColor(p);}}
+  }
+  // This week / next week totals across all reps
+  var twMTF=0, twGP=0, twFinal=0, twClosing=0;
+  var nwMTF=0, nwGP=0, nwFinal=0;
+  for (var si2=0; si2<repData.length; si2++) {
+    var sr2=repData[si2];
+    twMTF   += parseFloat(val(rows,sr2.mtfTW,1))||0;
+    twGP    += parseFloat(val(rows,sr2.gpTW,1))||0;
+    twFinal += parseFloat(val(rows,sr2.finalTW,1))||0;
+    twClosing += parseFloat(val(rows,sr2.closing,1))||0;
+    nwMTF   += parseFloat(val(rows,sr2.mtfNW,1))||0;
+    nwGP    += parseFloat(val(rows,sr2.gpNW,1))||0;
+    nwFinal += parseFloat(val(rows,sr2.finalNW,1))||0;
+  }
+  var twTot = twMTF + twGP + twFinal;
+  var nwTot = nwMTF + nwGP + nwFinal;
+  set("twTotalVal", twTot);
+  set("nwTotalVal", nwTot);
+  setMCard("mtfTWVal","mtfTWBar",twMTF,32);
+  setMCard("gpTWVal","gpTWBar",twGP,8);
+  setMCard("finalTWVal","finalTWBar",twFinal,4);
+  var closingTWEl=document.getElementById("closingTWVal");
+  if(closingTWEl) closingTWEl.textContent = twClosing > 0 ? money(twClosing) : "$0";
+  setMCard("mtfNWVal","mtfNWBar",nwMTF,32);
+  setMCard("gpNWVal","gpNWBar",nwGP,8);
+  setMCard("finalNWVal","finalNWBar",nwFinal,4);
+
   var tbody = document.getElementById("repsBody");
   if (tbody) {
     tbody.innerHTML = "";
@@ -648,15 +660,16 @@ function extendRender(rows) {
       var cl=val(rows,rep.closing,1), mtfNW=val(rows,rep.mtfNW,1), gpNW=val(rows,rep.gpNW,1), finalNW=val(rows,rep.finalNW,1);
       var tr=document.createElement("tr");
       tr.style.borderBottom="1px solid #dedfed";
+      var tdBase = 'padding:8px 14px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
       tr.innerHTML=
-        '<td style="padding:8px 14px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;color:#18174c;">' + rep.name + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (mtfTW ? '#18174c' : '#6b6b80') + ';">' + (mtfTW || '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (gpTW ? '#18174c' : '#6b6b80') + ';">' + (gpTW || '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (finalTW ? '#18174c' : '#6b6b80') + ';">' + (finalTW || '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (cl ? '#4caf87' : '#6b6b80') + ';">' + (cl ? money(num(cl)) : '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (mtfNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (mtfNW || '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (gpNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (gpNW || '\u2014') + '</td>' +
-        '<td style="padding:8px 14px;font-size:12px;color:' + (finalNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (finalNW || '\u2014') + '</td>';
+        '<td style="' + tdBase + 'font-family:Montserrat,sans-serif;font-weight:700;color:#18174c;">' + rep.name + '</td>' +
+        '<td style="' + tdBase + 'color:' + (mtfTW ? '#18174c' : '#6b6b80') + ';">' + (mtfTW || '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (gpTW ? '#18174c' : '#6b6b80') + ';">' + (gpTW || '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (finalTW ? '#18174c' : '#6b6b80') + ';">' + (finalTW || '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (cl ? '#4caf87' : '#6b6b80') + ';">' + (cl ? money(num(cl)) : '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (mtfNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (mtfNW || '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (gpNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (gpNW || '\u2014') + '</td>' +
+        '<td style="' + tdBase + 'color:' + (finalNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (finalNW || '\u2014') + '</td>';
       tbody.appendChild(tr);
     }
   }
