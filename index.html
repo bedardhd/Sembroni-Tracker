@@ -539,7 +539,6 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     setBar("clientsBar", num(val(rows, 13, 1)), 100);
     set("pipelineVal", money(num(val(rows, 7, 1))));
     set("openRolesVal", val(rows, 14, 1) || "—");
-  set("lastMonthVal", money(num(val(rows, 93, 1))));
 
     // Rocks (rows 17-22, 0-indexed)
     setRock(1, status(val(rows, 18, 1)), val(rows, 19, 1));
@@ -605,11 +604,16 @@ function extendRender(rows) {
   // Reps
   // Reps start at row 35 (0-indexed), groups of 3: name(col1), meetings(col1 next row), closed(col1 next row)
   var repData = [];
+  // Reps are now fully sequential 8-row blocks starting at row 38 (1-indexed).
+  // Loop self-extends: keeps reading blocks until it hits a blank name row,
+  // so new reps can be added by editing the sheet only — no code change needed.
   var repStart = 37;
-  for (var repIdx = 0; repIdx < 10; repIdx++) {
+  for (var repIdx = 0; repIdx < 20; repIdx++) {
     var nameRow = repStart + (repIdx * 8);
     var repName = val(rows, nameRow, 1);
-    if (!repName) break;
+    // Stop when we hit a blank, or a purely numeric value — that's the
+    // EOM Total row, not a rep name, so the rep block has ended.
+    if (!repName || /^[\d.,$\s]+$/.test(String(repName))) break;
     repData.push({
       name: repName,
       mtfTW: nameRow + 1,
@@ -621,6 +625,13 @@ function extendRender(rows) {
       finalNW: nameRow + 7
     });
   }
+
+  // Last Month Revenue / EOM Total now sits one row after the final rep
+  // block, wherever that ends up — reads dynamically off repData.length
+  // instead of a hardcoded row, so it stays correct as reps are added.
+  var lastMonthRow = repStart + (repData.length * 8);
+  set("lastMonthVal", money(num(val(rows, lastMonthRow, 1))));
+
   function setMCard(vid,bid,actual,goal){
     var el=document.getElementById(vid); if(el) el.textContent=actual;
     if(bid){var bar=document.getElementById(bid);if(bar){var p=Math.min((actual/goal)*100,100);bar.style.width=p+"%";bar.className="bar "+barColor(p);}}
