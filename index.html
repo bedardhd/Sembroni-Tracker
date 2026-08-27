@@ -19,7 +19,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
 .north-star-eye { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: #c9a44e; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
 .north-star-text { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 700; color: #fff; line-height: 1.5; }
 .north-star-text span { color: #c9a44e; }
-.cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px; }
 .card { background: #fff; border-radius: 6px; padding: 16px; border-top: 3px solid #89acc9; box-shadow: 0 1px 4px rgba(24,23,76,0.07); }
 .card-label { font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700; color: #6b6b80; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 6px; }
 .card-val { font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 800; color: #18174c; line-height: 1; }
@@ -110,6 +110,11 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="card-goal">Source: <span>GHL</span></div>
     </div>
     <div class="card">
+      <div class="card-label">Active Prospects</div>
+      <div class="card-val" id="prospectsVal">—</div>
+      <div class="card-goal">Source: <span>GHL</span></div>
+    </div>
+    <div class="card">
       <div class="card-label">Open Roles</div>
       <div class="card-val" id="openRolesVal">—</div>
       <div class="card-goal">Currently hiring</div>
@@ -118,6 +123,11 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <div class="card-label">Last Month Revenue</div>
       <div class="card-val" id="lastMonthVal">—</div>
       <div class="card-goal">End of month actual</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Accrual Revenue</div>
+      <div class="card-val" id="accrualVal">—</div>
+      <div class="card-goal">Earned, uncollected</div>
     </div>
   </div>
 
@@ -538,6 +548,7 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Dat
     set("clientsVal", val(rows, 13, 1) || "—");
     setBar("clientsBar", num(val(rows, 13, 1)), 100);
     set("pipelineVal", money(num(val(rows, 7, 1))));
+    set("prospectsVal", val(rows, 8, 1) || "—");
     set("openRolesVal", val(rows, 14, 1) || "—");
 
     // Rocks (rows 17-22, 0-indexed)
@@ -631,6 +642,9 @@ function extendRender(rows) {
   // instead of a hardcoded row, so it stays correct as reps are added.
   var lastMonthRow = repStart + (repData.length * 8);
   set("lastMonthVal", money(num(val(rows, lastMonthRow, 1))));
+  // Accrual Revenue sits one row after Last Month Revenue (B111 today),
+  // calculated dynamically so it stays correct if reps are added later.
+  set("accrualVal", money(num(val(rows, lastMonthRow + 1, 1))));
 
   function setMCard(vid,bid,actual,goal){
     var el=document.getElementById(vid); if(el) el.textContent=actual;
