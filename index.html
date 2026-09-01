@@ -661,13 +661,13 @@ function extendRender(rows) {
   var nwMTF=0, nwGP=0, nwFinal=0;
   for (var si2=0; si2<repData.length; si2++) {
     var sr2=repData[si2];
-    twMTF   += parseFloat(val(rows,sr2.mtfTW,1))||0;
-    twGP    += parseFloat(val(rows,sr2.gpTW,1))||0;
-    twFinal += parseFloat(val(rows,sr2.finalTW,1))||0;
-    twClosing += parseFloat(val(rows,sr2.closing,1))||0;
-    nwMTF   += parseFloat(val(rows,sr2.mtfNW,1))||0;
-    nwGP    += parseFloat(val(rows,sr2.gpNW,1))||0;
-    nwFinal += parseFloat(val(rows,sr2.finalNW,1))||0;
+    twMTF   += num(val(rows,sr2.mtfTW,1))||0;
+    twGP    += num(val(rows,sr2.gpTW,1))||0;
+    twFinal += num(val(rows,sr2.finalTW,1))||0;
+    twClosing += num(val(rows,sr2.closing,1))||0;
+    nwMTF   += num(val(rows,sr2.mtfNW,1))||0;
+    nwGP    += num(val(rows,sr2.gpNW,1))||0;
+    nwFinal += num(val(rows,sr2.finalNW,1))||0;
   }
   var twTot = twMTF + twGP + twFinal;
   var nwTot = nwMTF + nwGP + nwFinal;
