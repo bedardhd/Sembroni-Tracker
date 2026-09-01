@@ -406,6 +406,7 @@ body { font-family: 'Lato', sans-serif; background: #f7f7fa; color: #18174c; }
       <tbody id="repsBody"></tbody>
     </table>
     </div>
+    <div id="repDebug" style="font-family:monospace;font-size:10px;color:#a0a0b0;padding:6px 14px 2px;"></div>
   </div>
 
   <!-- MIRROR -->
@@ -624,7 +625,10 @@ function extendRender(rows) {
     var repName = val(rows, nameRow, 1);
     // Stop when we hit a blank, or a purely numeric value — that's the
     // EOM Total row, not a rep name, so the rep block has ended.
-    if (!repName || /^[\d.,$\s]+$/.test(String(repName))) break;
+    if (!repName || /^[\d.,$\s]+$/.test(String(repName))) {
+      window._repStopReason = "Stopped at sheet row " + (nameRow+1) + " (rep #" + (repIdx+1) + "). Raw value found there: " + JSON.stringify(repName) + (repName===null||repName===undefined||repName==="" ? " (blank/missing)" : " (looked numeric, not a name)");
+      break;
+    }
     repData.push({
       name: repName,
       mtfTW: nameRow + 1,
@@ -636,6 +640,8 @@ function extendRender(rows) {
       finalNW: nameRow + 7
     });
   }
+  console.log("Reps found:", repData.length, repData.map(function(r){return r.name;}));
+  console.log("Stop reason:", window._repStopReason || "hit loop cap (20), not a real stop condition");
 
   // Last Month Revenue / EOM Total now sits one row after the final rep
   // block, wherever that ends up — reads dynamically off repData.length
@@ -696,6 +702,15 @@ function extendRender(rows) {
         '<td style="' + tdBase + 'color:' + (gpNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (gpNW || '\u2014') + '</td>' +
         '<td style="' + tdBase + 'color:' + (finalNW ? '#18174c' : '#6b6b80') + ';background:#fdf6e3;">' + (finalNW || '\u2014') + '</td>';
       tbody.appendChild(tr);
+    }
+  }
+  var repDebugEl = document.getElementById("repDebug");
+  if (repDebugEl) {
+    if (repData.length < 9) {
+      repDebugEl.textContent = "\u26a0 Only " + repData.length + " of 9 expected reps loaded. " + (window._repStopReason || "");
+      repDebugEl.style.color = "#c0392b";
+    } else {
+      repDebugEl.textContent = "";
     }
   }
 
