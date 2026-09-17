@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sembroni Group — Interactive Org Chart</title>
+<style>
+  :root {
+    --navy: #18174c;
+    --navy-soft: #262566;
+    --gold: #c9a44e;
+    --gold-soft: #e7d3a3;
+    --paper: #f7f5f0;
+    --ink: #1c1b2e;
+    --muted: #6b6a86;
+    --line: #c9c6da;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 40px 24px 32px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 1.9rem;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+  }
+  header p {
+    margin: 0 auto;
+    max-width: 560px;
+    color: var(--gold-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .search-wrap {
+    max-width: 520px;
+    margin: 24px auto 0;
+    padding: 0 16px;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 13px 18px;
+    font-size: 1rem;
+    font-family: Georgia, serif;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  #status {
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    padding: 60px 20px;
+  }
+  main {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 40px 20px 80px;
+  }
+  .chart {
+    display: flex;
+    justify-content: center;
+    min-width: fit-content;
+  }
+  ul.tree, ul.tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  ul.tree { padding-top: 0; }
+  ul.tree ul { padding-top: 30px; }
+  ul.tree li {
+    position: relative;
+    padding: 0 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* connector lines */
+  ul.tree ul li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 30px;
+    border-top: 2px solid var(--line);
+    border-left: 2px solid var(--line);
+  }
+  ul.tree ul li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 30px;
+    border-top: 2px solid var(--line);
+    border-right: 2px solid var(--line);
+  }
+  ul.tree ul li:only-child::before,
+  ul.tree ul li:only-child::after {
+    display: none;
+  }
+  ul.tree ul li:only-child { padding-top: 30px; }
+  ul.tree ul li:first-child::before { border: none; }
+  ul.tree ul li:last-child::after { border: none; }
+  ul.tree ul li:last-child::before {
+    border-right: 2px solid var(--line);
+    border-radius: 0 6px 0 0;
+  }
+  ul.tree ul li:first-child::after {
+    border-left: 2px solid var(--line);
+    border-radius: 6px 0 0 0;
+  }
+  .node {
+    display: inline-block;
+    background: white;
+    border: 1px solid #e4e1d6;
+    border-top: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 10px 16px;
+    cursor: pointer;
+    min-width: 150px;
+    text-align: center;
+    transition: box-shadow 0.15s, opacity 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .node:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+  .node .name {
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .node .title {
+    font-size: 0.74rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 2px;
+    font-family: Arial, sans-serif;
+  }
+  .node.vacant {
+    border-top-color: var(--muted);
+    background: #efefe9;
+  }
+  .node.vacant .name { color: var(--muted); font-style: italic; }
+  .node.match {
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-soft);
+  }
+  .node.dim { opacity: 0.35; }
+
+  /* modal */
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(24,23,76,0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  #overlay.open { display: flex; }
+  #modal {
+    background: white;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 6px;
+    border-top: 5px solid var(--gold);
+    padding: 26px 28px 24px;
+    position: relative;
+  }
+  #modal .close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 1.3rem;
+    color: var(--muted);
+    background: none;
+    border: none;
+    line-height: 1;
+  }
+  #modal h2 {
+    margin: 0 0 2px;
+    color: var(--navy);
+    font-size: 1.35rem;
+    font-weight: normal;
+  }
+  #modal .subtitle {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.9rem;
+    margin: 0 0 4px;
+  }
+  #modal .reportsTo {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: Arial, sans-serif;
+    margin-bottom: 16px;
+  }
+  #modal .section { margin-bottom: 14px; }
+  #modal .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    border-bottom: 1px solid var(--gold-soft);
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+    font-family: Arial, sans-serif;
+  }
+  #modal ul { margin: 0; padding-left: 18px; }
+  #modal li { font-size: 0.92rem; line-height: 1.45; margin-bottom: 4px; }
+  .needs-input { color: var(--muted); font-style: italic; }
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: Arial, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sembroni Group — Org Chart</h1>
+  <p>Click any name to see what they own, how to reach them, and what isn't theirs.</p>
+  <div class="search-wrap">
+    <input id="searchInput" type="text" placeholder="Search a name or a topic (e.g. &quot;Barbara&quot; or &quot;CRM&quot;)" autocomplete="off">
+  </div>
+</header>
+
+<main>
+  <div id="status">Loading org chart…</div>
+  <div class="chart" id="chart"></div>
+</main>
+
+<div id="overlay">
+  <div id="modal">
+    <button class="close" id="closeModal">&times;</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>Sembroni Group — Internal Reference — Data source: shared role directory sheet</footer>
+
+<script>
+/* ====================== CONFIGURATION ======================
+   Fill these in once. After that, every future update happens
+   in the Google Sheet — this file never needs to be touched again.
+
+   SHEET_ID  — the long ID in the sheet's URL, between /d/ and /edit
+   API_KEY   — a Google Cloud API key with the Sheets API enabled
+   RANGE     — the tab name + column range holding the data
+   =============================================================== */
+  const SHEET_ID = "1L_rw9lXoIuevL0_EAxKH3Me9E8fj_sgo21eI-5XU18A";
+  const API_KEY  = "PASTE_YOUR_API_KEY_HERE";
+  const RANGE    = "Sembroni Roles!A2:F"; // skips the header row
+/* ============================================================= */
+
+  const statusEl = document.getElementById('status');
+  const chartEl = document.getElementById('chart');
+  const searchInput = document.getElementById('searchInput');
+  const overlay = document.getElementById('overlay');
+  const modalBody = document.getElementById('modalBody');
+
+  let people = {}; // name -> { name, title, reportsTo, entity, sections: {label: [text]}, extraEntities: Set }
+
+  function labelOrder(label) {
+    if (label === 'Owns') return 0;
+    if (label === 'Escalation') return 1;
+    if (label.startsWith('Not')) return 2;
+    return 3;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildPeople(rows) {
+    const map = {};
+    rows.forEach(row => {
+      const [person, title, reportsTo, entity, label, text] = row;
+      if (!person) return;
+      if (!map[person]) {
+        map[person] = {
+          name: person,
+          title: title || '',
+          reportsTo: (reportsTo || '').trim(),
+          entity: entity || '',
+          sections: {},
+          extraEntities: new Set()
+        };
+      }
+      const p = map[person];
+      // "first row wins" for identity fields — later mismatched values are ignored
+      if (entity && entity !== p.entity) p.extraEntities.add(entity);
+      if (label && text) {
+        if (!p.sections[label]) p.sections[label] = [];
+        p.sections[label].push(text);
+      }
+    });
+    return map;
+  }
+
+  function buildTree(map) {
+    const names = Object.keys(map);
+    const nameSet = new Set(names);
+    const childrenOf = {};
+    const roots = [];
+    names.forEach(n => { childrenOf[n] = []; });
+    names.forEach(n => {
+      const rt = map[n].reportsTo;
+      if (rt && nameSet.has(rt) && rt !== n) {
+        childrenOf[rt].push(n);
+      } else {
+        roots.push(n);
+      }
+    });
+    return { roots, childrenOf };
+  }
+
+  function renderNode(name, map, childrenOf) {
+    const p = map[name];
+    const isVacant = /VACANT/i.test(name);
+    const kids = childrenOf[name] || [];
+    const kidsHtml = kids.length
+      ? `<ul>${kids.map(k => renderNode(k, map, childrenOf)).join('')}</ul>`
+      : '';
+    return `
+      <li>
+        <div class="node ${isVacant ? 'vacant' : ''}" data-name="${escapeHtml(name)}">
+          <div class="name">${escapeHtml(name)}</div>
+          <div class="title">${escapeHtml(p.title)}</div>
+        </div>
+        ${kidsHtml}
+      </li>`;
+  }
+
+  function renderAll() {
+    const { roots, childrenOf } = buildTree(people);
+    const html = roots.map(r => renderNode(r, people, childrenOf)).join('');
+    chartEl.innerHTML = `<ul class="tree">${html}</ul>`;
+    chartEl.querySelectorAll('.node').forEach(node => {
+      node.addEventListener('click', () => openModal(node.dataset.name));
+    });
+  }
+
+  function openModal(name) {
+    const p = people[name];
+    if (!p) return;
+    if (/VACANT/i.test(name)) {
+      modalBody.innerHTML = `
+        <h2>${escapeHtml(name)}</h2>
+        <p class="subtitle">Open position</p>
+        <p>This role hasn't been filled yet.</p>`;
+      overlay.classList.add('open');
+      return;
+    }
+    const labels = Object.keys(p.sections).sort((a, b) => labelOrder(a) - labelOrder(b));
+    const sectionsHtml = labels.map(label => {
+      const items = p.sections[label].map(t => {
+        const isPlaceholder = /NEEDS INPUT/i.test(t) || /^PARTIAL/i.test(t);
+        const clean = t.replace(/^PARTIAL\s*—?\s*/i, '').replace(/NEEDS INPUT\s*—?\s*/i, '');
+        return `<li class="${isPlaceholder ? 'needs-input' : ''}">${
+          /NEEDS INPUT/i.test(t) ? 'Not yet documented' : escapeHtml(clean)
+        }</li>`;
+      }).join('');
+      return `
+        <div class="section">
+          <div class="section-label">${escapeHtml(label.toUpperCase())}</div>
+          <ul>${items}</ul>
+        </div>`;
+    }).join('');
+
+    const extra = p.extraEntities.size
+      ? `<div class="reportsTo">Also holds a role at: ${[...p.extraEntities].map(escapeHtml).join(', ')}</div>`
+      : '';
+
+    modalBody.innerHTML = `
+      <h2>${escapeHtml(p.name)}</h2>
+      <p class="subtitle">${escapeHtml(p.title)}${p.entity ? ' — ' + escapeHtml(p.entity) : ''}</p>
+      <div class="reportsTo">${p.reportsTo ? 'Reports to: ' + escapeHtml(p.reportsTo) : 'Top of the chart'}</div>
+      ${extra}
+      ${sectionsHtml || '<p class="needs-input">No role details documented yet.</p>'}`;
+    overlay.classList.add('open');
+  }
+
+  document.getElementById('closeModal').addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  function searchBlob(p) {
+    const parts = [p.name, p.title, p.entity];
+    Object.entries(p.sections).forEach(([label, texts]) => parts.push(label, ...texts));
+    return parts.join(' ').toLowerCase();
+  }
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    const nodes = chartEl.querySelectorAll('.node');
+    let firstMatch = null;
+    nodes.forEach(node => {
+      const p = people[node.dataset.name];
+      const match = !q || (p && searchBlob(p).includes(q));
+      node.classList.toggle('match', !!q && match);
+      node.classList.toggle('dim', !!q && !match);
+      if (q && match && !firstMatch) firstMatch = node;
+    });
+    if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  });
+
+  async function loadData() {
+    if (SHEET_ID.startsWith('PASTE_') || API_KEY.startsWith('PASTE_')) {
+      statusEl.textContent = 'This page is not yet connected to a sheet — add SHEET_ID and API_KEY in the code.';
+      return;
+    }
+    try {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(RANGE)}?key=${API_KEY}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Sheets API returned ${res.status}`);
+      const data = await res.json();
+      const rows = data.values || [];
+      people = buildPeople(rows);
+      if (Object.keys(people).length === 0) {
+        statusEl.textContent = 'No data found in the sheet yet.';
+        return;
+      }
+      statusEl.style.display = 'none';
+      renderAll();
+    } catch (err) {
+      statusEl.textContent = 'Could not load the org chart. Check the sheet sharing settings and the SHEET_ID / API_KEY in the code.';
+      console.error(err);
+    }
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>
