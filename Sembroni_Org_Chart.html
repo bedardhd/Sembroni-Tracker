@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sembroni Group — Interactive Org Chart</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
   :root {
     --navy: #18174c;
@@ -13,7 +14,7 @@
     --paper: #f7f5f0;
     --ink: #1c1b2e;
     --muted: #6b6a86;
-    --line: #c9c6da;
+    --line: #b9b6cf;
   }
   * { box-sizing: border-box; }
   body {
@@ -62,106 +63,51 @@
     font-style: italic;
     padding: 60px 20px;
   }
-  main {
-    max-width: 100%;
-    overflow-x: auto;
+  #chartScroll {
+    width: 100%;
+    overflow: auto;
     padding: 40px 20px 80px;
   }
-  .chart {
-    display: flex;
-    justify-content: center;
-    min-width: fit-content;
-  }
-  ul.tree, ul.tree ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-  }
-  ul.tree { padding-top: 0; }
-  ul.tree ul { padding-top: 30px; }
-  ul.tree li {
+  #chartInner {
     position: relative;
-    padding: 0 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0 auto;
   }
-  /* connector lines */
-  ul.tree ul li::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 30px;
-    border-top: 2px solid var(--line);
-    border-left: 2px solid var(--line);
-  }
-  ul.tree ul li::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 30px;
-    border-top: 2px solid var(--line);
-    border-right: 2px solid var(--line);
-  }
-  ul.tree ul li:only-child::before,
-  ul.tree ul li:only-child::after {
-    display: none;
-  }
-  ul.tree ul li:only-child { padding-top: 30px; }
-  ul.tree ul li:first-child::before { border: none; }
-  ul.tree ul li:last-child::after { border: none; }
-  ul.tree ul li:last-child::before {
-    border-right: 2px solid var(--line);
-    border-radius: 0 6px 0 0;
-  }
-  ul.tree ul li:first-child::after {
-    border-left: 2px solid var(--line);
-    border-radius: 6px 0 0 0;
+  svg.links path {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2px;
   }
   .node {
-    display: inline-block;
+    position: absolute;
     background: white;
     border: 1px solid #e4e1d6;
     border-top: 4px solid var(--gold);
     border-radius: 4px;
-    padding: 10px 16px;
+    padding: 10px 14px;
     cursor: pointer;
-    min-width: 150px;
     text-align: center;
     transition: box-shadow 0.15s, opacity 0.15s;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-  .node:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-  }
+  .node:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
   .node .name {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--navy);
+    line-height: 1.2;
   }
   .node .title {
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     color: var(--muted);
     font-style: italic;
-    margin-top: 2px;
+    margin-top: 3px;
     font-family: Arial, sans-serif;
+    line-height: 1.25;
   }
-  .node.vacant {
-    border-top-color: var(--muted);
-    background: #efefe9;
-  }
+  .node.vacant { border-top-color: var(--muted); background: #efefe9; }
   .node.vacant .name { color: var(--muted); font-style: italic; }
-  .node.match {
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 0 3px var(--gold-soft);
-  }
-  .node.dim { opacity: 0.35; }
+  .node.match { border: 2px solid var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+  .node.dim { opacity: 0.3; }
 
-  /* modal */
   #overlay {
     display: none;
     position: fixed;
@@ -196,44 +142,19 @@
     border: none;
     line-height: 1;
   }
-  #modal h2 {
-    margin: 0 0 2px;
-    color: var(--navy);
-    font-size: 1.35rem;
-    font-weight: normal;
-  }
-  #modal .subtitle {
-    color: var(--muted);
-    font-style: italic;
-    font-size: 0.9rem;
-    margin: 0 0 4px;
-  }
-  #modal .reportsTo {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-family: Arial, sans-serif;
-    margin-bottom: 16px;
-  }
+  #modal h2 { margin: 0 0 2px; color: var(--navy); font-size: 1.35rem; font-weight: normal; }
+  #modal .subtitle { color: var(--muted); font-style: italic; font-size: 0.9rem; margin: 0 0 4px; }
+  #modal .reportsTo { font-size: 0.8rem; color: var(--muted); font-family: Arial, sans-serif; margin-bottom: 16px; }
   #modal .section { margin-bottom: 14px; }
   #modal .section-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: var(--gold);
-    border-bottom: 1px solid var(--gold-soft);
-    padding-bottom: 3px;
-    margin-bottom: 6px;
+    font-size: 0.72rem; letter-spacing: 0.06em; color: var(--gold);
+    border-bottom: 1px solid var(--gold-soft); padding-bottom: 3px; margin-bottom: 6px;
     font-family: Arial, sans-serif;
   }
   #modal ul { margin: 0; padding-left: 18px; }
   #modal li { font-size: 0.92rem; line-height: 1.45; margin-bottom: 4px; }
   .needs-input { color: var(--muted); font-style: italic; }
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-family: Arial, sans-serif;
-  }
+  footer { text-align: center; padding: 20px; font-size: 0.78rem; color: var(--muted); font-family: Arial, sans-serif; }
 </style>
 </head>
 <body>
@@ -246,10 +167,10 @@
   </div>
 </header>
 
-<main>
-  <div id="status">Loading org chart…</div>
-  <div class="chart" id="chart"></div>
-</main>
+<div id="status">Loading org chart…</div>
+<div id="chartScroll">
+  <div id="chartInner"></div>
+</div>
 
 <div id="overlay">
   <div id="modal">
@@ -264,23 +185,25 @@
 /* ====================== CONFIGURATION ======================
    Fill these in once. After that, every future update happens
    in the Google Sheet — this file never needs to be touched again.
-
-   SHEET_ID  — the long ID in the sheet's URL, between /d/ and /edit
-   API_KEY   — a Google Cloud API key with the Sheets API enabled
-   RANGE     — the tab name + column range holding the data
    =============================================================== */
   const SHEET_ID = "1L_rw9lXoIuevL0_EAxKH3Me9E8fj_sgo21eI-5XU18A";
-  const API_KEY  = "AIzaSyCKnPHKRlDNyI74Ui223US7RhH7GxrG8bc";
-  const RANGE    = "Sembroni Roles!A2:F"; // skips the header row
+  const API_KEY  = "PASTE_YOUR_API_KEY_HERE";
+  const RANGE    = "Sembroni Roles!A2:F";
 /* ============================================================= */
 
   const statusEl = document.getElementById('status');
-  const chartEl = document.getElementById('chart');
+  const chartScroll = document.getElementById('chartScroll');
+  const chartInner = document.getElementById('chartInner');
   const searchInput = document.getElementById('searchInput');
   const overlay = document.getElementById('overlay');
   const modalBody = document.getElementById('modalBody');
 
-  let people = {}; // name -> { name, title, reportsTo, entity, sections: {label: [text]}, extraEntities: Set }
+  const NODE_W = 170;
+  const NODE_H = 58;
+  const H_GAP = 30;   // horizontal gap between sibling nodes
+  const V_GAP = 90;   // vertical gap between levels
+
+  let people = {};
 
   function labelOrder(label) {
     if (label === 'Owns') return 0;
@@ -291,10 +214,8 @@
 
   function escapeHtml(str) {
     return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function buildPeople(rows) {
@@ -304,16 +225,11 @@
       if (!person) return;
       if (!map[person]) {
         map[person] = {
-          name: person,
-          title: title || '',
-          reportsTo: (reportsTo || '').trim(),
-          entity: entity || '',
-          sections: {},
-          extraEntities: new Set()
+          name: person, title: title || '', reportsTo: (reportsTo || '').trim(),
+          entity: entity || '', sections: {}, extraEntities: new Set()
         };
       }
       const p = map[person];
-      // "first row wins" for identity fields — later mismatched values are ignored
       if (entity && entity !== p.entity) p.extraEntities.add(entity);
       if (label && text) {
         if (!p.sections[label]) p.sections[label] = [];
@@ -323,46 +239,88 @@
     return map;
   }
 
-  function buildTree(map) {
+  function buildHierarchy(map) {
     const names = Object.keys(map);
     const nameSet = new Set(names);
     const childrenOf = {};
-    const roots = [];
     names.forEach(n => { childrenOf[n] = []; });
+    let rootName = null;
     names.forEach(n => {
       const rt = map[n].reportsTo;
       if (rt && nameSet.has(rt) && rt !== n) {
         childrenOf[rt].push(n);
+      } else if (!rootName) {
+        rootName = n;
       } else {
-        roots.push(n);
+        // extra root-like nodes (shouldn't normally happen) — attach to primary root
+        childrenOf[rootName].push(n);
       }
     });
-    return { roots, childrenOf };
+    function toNode(name) {
+      return { name, children: childrenOf[name].map(toNode) };
+    }
+    return toNode(rootName);
   }
 
-  function renderNode(name, map, childrenOf) {
-    const p = map[name];
-    const isVacant = /VACANT/i.test(name);
-    const kids = childrenOf[name] || [];
-    const kidsHtml = kids.length
-      ? `<ul>${kids.map(k => renderNode(k, map, childrenOf)).join('')}</ul>`
-      : '';
-    return `
-      <li>
-        <div class="node ${isVacant ? 'vacant' : ''}" data-name="${escapeHtml(name)}">
-          <div class="name">${escapeHtml(name)}</div>
-          <div class="title">${escapeHtml(p.title)}</div>
-        </div>
-        ${kidsHtml}
-      </li>`;
-  }
+  function renderTree() {
+    const rootData = buildHierarchy(people);
+    const root = d3.hierarchy(rootData);
+    const treeLayout = d3.tree().nodeSize([NODE_W + H_GAP, NODE_H + V_GAP]);
+    treeLayout(root);
 
-  function renderAll() {
-    const { roots, childrenOf } = buildTree(people);
-    const html = roots.map(r => renderNode(r, people, childrenOf)).join('');
-    chartEl.innerHTML = `<ul class="tree">${html}</ul>`;
-    chartEl.querySelectorAll('.node').forEach(node => {
-      node.addEventListener('click', () => openModal(node.dataset.name));
+    const nodes = root.descendants();
+    const links = root.links();
+
+    let minX = Infinity, maxX = -Infinity, maxY = -Infinity;
+    nodes.forEach(n => {
+      minX = Math.min(minX, n.x);
+      maxX = Math.max(maxX, n.x);
+      maxY = Math.max(maxY, n.y);
+    });
+    const offsetX = -minX + NODE_W / 2 + 20;
+    const offsetY = 20;
+    const totalWidth = (maxX - minX) + NODE_W + 40;
+    const totalHeight = maxY + NODE_H + 40;
+
+    chartInner.style.width = totalWidth + 'px';
+    chartInner.style.height = totalHeight + 'px';
+    chartInner.innerHTML = '';
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'links');
+    svg.setAttribute('width', totalWidth);
+    svg.setAttribute('height', totalHeight);
+    svg.style.position = 'absolute';
+    svg.style.top = '0';
+    svg.style.left = '0';
+
+    const linkGen = d3.linkVertical()
+      .x(d => d.x + offsetX)
+      .y(d => d.y + offsetY + NODE_H / 2);
+
+    links.forEach(l => {
+      const path = document.createElementNS(svgNS, 'path');
+      path.setAttribute('d', linkGen(l));
+      svg.appendChild(path);
+    });
+    chartInner.appendChild(svg);
+
+    nodes.forEach(n => {
+      const name = n.data.name;
+      const p = people[name];
+      const isVacant = /VACANT/i.test(name);
+      const div = document.createElement('div');
+      div.className = 'node' + (isVacant ? ' vacant' : '');
+      div.dataset.name = name;
+      div.style.left = (n.x + offsetX - NODE_W / 2) + 'px';
+      div.style.top = (n.y + offsetY) + 'px';
+      div.style.width = NODE_W + 'px';
+      div.innerHTML = `
+        <div class="name">${escapeHtml(name)}</div>
+        <div class="title">${escapeHtml(p ? p.title : '')}</div>`;
+      div.addEventListener('click', () => openModal(name));
+      chartInner.appendChild(div);
     });
   }
 
@@ -370,27 +328,20 @@
     const p = people[name];
     if (!p) return;
     if (/VACANT/i.test(name)) {
-      modalBody.innerHTML = `
-        <h2>${escapeHtml(name)}</h2>
-        <p class="subtitle">Open position</p>
-        <p>This role hasn't been filled yet.</p>`;
+      modalBody.innerHTML = `<h2>${escapeHtml(name)}</h2><p class="subtitle">Open position</p><p>This role hasn't been filled yet.</p>`;
       overlay.classList.add('open');
       return;
     }
     const labels = Object.keys(p.sections).sort((a, b) => labelOrder(a) - labelOrder(b));
     const sectionsHtml = labels.map(label => {
       const items = p.sections[label].map(t => {
-        const isPlaceholder = /NEEDS INPUT/i.test(t) || /^PARTIAL/i.test(t);
+        const isPlaceholder = /NEEDS INPUT/i.test(t) || /^PARTIAL/i.test(t) || /^NOTE —/i.test(t);
         const clean = t.replace(/^PARTIAL\s*—?\s*/i, '').replace(/NEEDS INPUT\s*—?\s*/i, '');
         return `<li class="${isPlaceholder ? 'needs-input' : ''}">${
           /NEEDS INPUT/i.test(t) ? 'Not yet documented' : escapeHtml(clean)
         }</li>`;
       }).join('');
-      return `
-        <div class="section">
-          <div class="section-label">${escapeHtml(label.toUpperCase())}</div>
-          <ul>${items}</ul>
-        </div>`;
+      return `<div class="section"><div class="section-label">${escapeHtml(label.toUpperCase())}</div><ul>${items}</ul></div>`;
     }).join('');
 
     const extra = p.extraEntities.size
@@ -417,9 +368,9 @@
 
   searchInput.addEventListener('input', () => {
     const q = searchInput.value.trim().toLowerCase();
-    const nodes = chartEl.querySelectorAll('.node');
+    const nodeEls = chartInner.querySelectorAll('.node');
     let firstMatch = null;
-    nodes.forEach(node => {
+    nodeEls.forEach(node => {
       const p = people[node.dataset.name];
       const match = !q || (p && searchBlob(p).includes(q));
       node.classList.toggle('match', !!q && match);
@@ -446,7 +397,7 @@
         return;
       }
       statusEl.style.display = 'none';
-      renderAll();
+      renderTree();
     } catch (err) {
       statusEl.textContent = 'Could not load the org chart. Check the sheet sharing settings and the SHEET_ID / API_KEY in the code.';
       console.error(err);
